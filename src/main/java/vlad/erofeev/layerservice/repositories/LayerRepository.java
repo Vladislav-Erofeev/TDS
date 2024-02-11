@@ -5,5 +5,5 @@ import org.springframework.stereotype.Repository;
 import vlad.erofeev.layerservice.domain.entities.Layer;
 
 @Repository
-public interface LayerRepository extends JpaRepository<Layer, Integer> {
+public interface LayerRepository extends JpaRepository<Layer, Long> {
 }

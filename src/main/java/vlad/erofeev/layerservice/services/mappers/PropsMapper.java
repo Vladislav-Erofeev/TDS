@@ -9,7 +9,7 @@ public interface PropsMapper {
     String SALT = "TESTSALT";
 
     @Named("encodeId")
-    static String encodeId(Integer id) {
+    static String encodeId(Long id) {
         return new Hashids(SALT, 4).encode(id);
     }
 
