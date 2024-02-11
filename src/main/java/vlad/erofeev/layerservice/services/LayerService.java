@@ -7,7 +7,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import vlad.erofeev.layerservice.domain.entities.Layer;
 import vlad.erofeev.layerservice.repositories.LayerRepository;
-import vlad.erofeev.layerservice.services.mappers.PropsMapper;
 
 import java.util.List;
 import java.util.Optional;
@@ -23,7 +22,7 @@ public class LayerService {
         return layerRepository.findAll();
     }
 
-    public Layer getById(Long id) {
+    public Layer getById(Long id) throws ObjectNotFoundException {
         Optional<Layer> optionalLayer = layerRepository.findById(id);
         if (optionalLayer.isEmpty()) {
             log.error("Layer not found id={}", id);
@@ -43,13 +42,12 @@ public class LayerService {
     }
 
     @Transactional
-    public Layer edit(Layer layer, String id) {
-        long[] ids = PropsMapper.decodeId(id);
-        if (ids.length == 0 || !layerRepository.existsById(ids[0])) {
-            log.error("Layer not found id={}", id);
-            throw new ObjectNotFoundException("Layer not found", (Object) id);
+    public Layer edit(Layer layer) throws ObjectNotFoundException {
+        try {
+            getById(layer.getId());
+            return layerRepository.save(layer);
+        } catch (ObjectNotFoundException e) {
+            throw e;
         }
-        layer.setId(ids[0]);
-        return layerRepository.save(layer);
     }
 }

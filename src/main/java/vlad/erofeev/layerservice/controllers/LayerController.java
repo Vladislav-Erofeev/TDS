@@ -7,7 +7,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import vlad.erofeev.layerservice.domain.dto.ErrorResponse;
+import vlad.erofeev.layerservice.domain.dto.LayerDTO;
 import vlad.erofeev.layerservice.domain.dto.LayerItemDTO;
+import vlad.erofeev.layerservice.domain.dto.NewLayerDTO;
 import vlad.erofeev.layerservice.domain.entities.Layer;
 import vlad.erofeev.layerservice.services.LayerService;
 import vlad.erofeev.layerservice.services.mappers.LayerMapper;
@@ -31,37 +33,41 @@ public class LayerController {
     }
 
     @PostMapping
-    public LayerItemDTO save(@RequestBody LayerItemDTO layerDTO) {
+    public LayerItemDTO save(@RequestBody NewLayerDTO layerDTO) {
         log.info("POST /layer {}", layerDTO.toString());
         Layer layer = layerMapper.convertToLayer(layerDTO);
-        layer.setId(null);
         return layerMapper.convertToLayerItemDTO(layerService.save(layer));
     }
 
     @GetMapping("/{id}")
-    public LayerItemDTO getById(@PathVariable("id") String id) {
+    public LayerDTO getById(@PathVariable("id") String id) {
         log.info("GET /layer/{}", id);
-        long[] ids = PropsMapper.decodeId(id);
-        return layerMapper.convertToLayerItemDTO(layerService.getById(ids[0]));
+        return layerMapper.convertToLayerDTO(layerService.getById(PropsMapper.decodeId(id)));
     }
 
     @PatchMapping("/{id}")
-    public LayerItemDTO edit(@PathVariable("id") String id, @RequestBody LayerItemDTO layerDTO) {
+    public LayerItemDTO edit(@PathVariable("id") String id, @RequestBody NewLayerDTO layerDTO) {
         log.info("PATCH /layer/{} {}", id, layerDTO.toString());
         Layer layer = layerMapper.convertToLayer(layerDTO);
-        return layerMapper.convertToLayerItemDTO(layerService.edit(layer, id));
+        layer.setId(PropsMapper.decodeId(id));
+        return layerMapper.convertToLayerItemDTO(layerService.edit(layer));
     }
 
     @DeleteMapping("/{id}")
     public void deleteById(@PathVariable("id") String id) {
         log.info("DELETE /layer/{}", id);
-        long[] ids = PropsMapper.decodeId(id);
-        layerService.deleteById(ids[0]);
+        layerService.deleteById(PropsMapper.decodeId(id));
     }
 
     @ExceptionHandler
     public ResponseEntity<ErrorResponse> objectNotFound(ObjectNotFoundException e) {
         ErrorResponse errorResponse = new ErrorResponse(e.getMessage());
         return new ResponseEntity<>(errorResponse, HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler
+    public ResponseEntity<ErrorResponse> cannotDecodeId(IllegalArgumentException e) {
+        ErrorResponse errorResponse = new ErrorResponse(e.getMessage());
+        return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
     }
 }
