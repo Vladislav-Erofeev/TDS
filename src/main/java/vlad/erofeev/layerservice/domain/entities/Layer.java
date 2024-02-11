@@ -1,11 +1,10 @@
 package vlad.erofeev.layerservice.domain.entities;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.Data;
 import lombok.ToString;
+
+import java.util.List;
 
 @Entity
 @Data
@@ -19,4 +18,7 @@ public class Layer {
     private String hName;
     private String description;
     private String iconUrl;
+
+    @OneToMany(mappedBy = "layer")
+    private List<Code> codes;
 }

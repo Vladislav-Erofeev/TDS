@@ -4,7 +4,7 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Named;
 import org.mapstruct.factory.Mappers;
-import vlad.erofeev.layerservice.domain.dto.LayerDTO;
+import vlad.erofeev.layerservice.domain.dto.LayerItemDTO;
 import vlad.erofeev.layerservice.domain.entities.Layer;
 
 @Mapper(uses = {PropsMapper.class})
@@ -19,8 +19,8 @@ public interface LayerMapper {
     }
 
     @Mapping(source = "id", target = "id", qualifiedByName = "encodeId")
-    LayerDTO convertToLayerDTO(Layer layer);
+    LayerItemDTO convertToLayerItemDTO(Layer layer);
 
     @Mapping(source = "id", target = "id", qualifiedByName = "convertId")
-    Layer convertToLayer(LayerDTO layerDTO);
+    Layer convertToLayer(LayerItemDTO layerDTO);
 }
