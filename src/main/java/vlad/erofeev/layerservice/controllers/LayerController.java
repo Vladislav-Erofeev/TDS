@@ -1,6 +1,7 @@
 package vlad.erofeev.layerservice.controllers;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.hibernate.ObjectNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,17 +21,20 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping("/layer")
 @RequiredArgsConstructor
+@Slf4j
 public class LayerController {
     private final LayerService layerService;
     private final LayerMapper layerMapper = LayerMapper.INSTANCE;
 
     @GetMapping
     public List<LayerDTO> getAll() {
+        log.info("GET /layer");
         return layerService.getAll().stream().map(layerMapper::convertToLayerDTO).collect(Collectors.toList());
     }
 
     @PostMapping
     public LayerDTO save(@RequestBody LayerDTO layerDTO) {
+        log.info("POST /layer {}", layerDTO.toString());
         Layer layer = layerMapper.convertToLayer(layerDTO);
         layer.setId(null);
         return layerMapper.convertToLayerDTO(layerService.save(layer));
@@ -38,18 +42,21 @@ public class LayerController {
 
     @GetMapping("/{id}")
     public LayerDTO getById(@PathVariable("id") String id) {
+        log.info("GET /layer/{}", id);
         long[] ids = PropsMapper.decodeId(id);
         return layerMapper.convertToLayerDTO(layerService.getById(ids[0]));
     }
 
     @PatchMapping("/{id}")
     public LayerDTO edit(@PathVariable("id") String id, @RequestBody LayerDTO layerDTO) {
+        log.info("PATCH /layer/{} {}", id, layerDTO.toString());
         Layer layer = layerMapper.convertToLayer(layerDTO);
         return layerMapper.convertToLayerDTO(layerService.edit(layer, id));
     }
 
     @DeleteMapping("/{id}")
     public void deleteById(@PathVariable("id") String id) {
+        log.info("DELETE /layer/{}", id);
         long[] ids = PropsMapper.decodeId(id);
         layerService.deleteById(ids[0]);
     }

@@ -1,6 +1,7 @@
 package vlad.erofeev.layerservice.services;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.hibernate.ObjectNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -14,6 +15,7 @@ import java.util.Optional;
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
+@Slf4j
 public class LayerService {
     private final LayerRepository layerRepository;
 
@@ -23,8 +25,10 @@ public class LayerService {
 
     public Layer getById(Long id) {
         Optional<Layer> optionalLayer = layerRepository.findById(id);
-        if (optionalLayer.isEmpty())
+        if (optionalLayer.isEmpty()) {
+            log.error("Layer not found id={}", id);
             throw new ObjectNotFoundException("Layer not found", id);
+        }
         return optionalLayer.get();
     }
 
@@ -41,8 +45,10 @@ public class LayerService {
     @Transactional
     public Layer edit(Layer layer, String id) {
         long[] ids = PropsMapper.decodeId(id);
-        if (ids.length == 0 || !layerRepository.existsById(ids[0]))
+        if (ids.length == 0 || !layerRepository.existsById(ids[0])) {
+            log.error("Layer not found id={}", id);
             throw new ObjectNotFoundException("Layer not found", (Object) id);
+        }
         layer.setId(ids[0]);
         return layerRepository.save(layer);
     }
