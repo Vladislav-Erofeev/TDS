@@ -8,6 +8,9 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 public class LayerDTO {
-    private Integer id;
+    private String id;
     private String name;
+    private String hName;
+    private String description;
+    private String iconUrl;
 }
