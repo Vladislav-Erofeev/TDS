@@ -17,7 +17,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping("/layer")
+@RequestMapping("/layers")
 @RequiredArgsConstructor
 @Slf4j
 public class LayerController {
