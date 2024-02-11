@@ -45,6 +45,10 @@
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>org.liquibase</groupId>
+            <artifactId>liquibase-core</artifactId>
+        </dependency>
     </dependencies>
 
     <build>
@@ -61,6 +65,18 @@
                     </excludes>
                 </configuration>
             </plugin>
+            <plugin>
+                <groupId>org.liquibase</groupId>
+                <artifactId>liquibase-maven-plugin</artifactId>
+                <version>4.20.0</version>
+                <configuration>
+                    <propertyFile>./src/main/resources/liquibase.properties</propertyFile>
+                    <changeLogFile>
+                        ./src/main/resources/db/changelog/db.changelog-master.yaml
+                    </changeLogFile>
+                </configuration>
+            </plugin>
+
         </plugins>
     </build>
 
