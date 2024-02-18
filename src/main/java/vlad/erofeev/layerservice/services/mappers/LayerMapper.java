@@ -8,7 +8,7 @@ import vlad.erofeev.layerservice.domain.dto.LayerItemDTO;
 import vlad.erofeev.layerservice.domain.dto.NewLayerDTO;
 import vlad.erofeev.layerservice.domain.entities.Layer;
 
-@Mapper(uses = {PropsMapper.class, CodeMapper.class})
+@Mapper(uses = {PropsMapper.class, CodeMapper.class, PropertyMapper.class})
 public interface LayerMapper {
     LayerMapper INSTANCE = Mappers.getMapper(LayerMapper.class);
 

@@ -21,4 +21,7 @@ public class Layer {
 
     @OneToMany(mappedBy = "layer")
     private List<Code> codes;
+
+    @OneToMany(mappedBy = "layer")
+    private List<Property> properties;
 }
