@@ -21,6 +21,7 @@ import java.util.stream.Collectors;
 @RequestMapping("/codes")
 @RequiredArgsConstructor
 @Slf4j
+@CrossOrigin
 public class CodeController {
     private final CodeService codeService;
     private final CodeMapper codeMapper = CodeMapper.INSTANCE;

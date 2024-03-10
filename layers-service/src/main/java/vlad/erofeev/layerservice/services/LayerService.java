@@ -3,13 +3,19 @@ package vlad.erofeev.layerservice.services;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.ObjectNotFoundException;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 import vlad.erofeev.layerservice.domain.entities.Layer;
 import vlad.erofeev.layerservice.repositories.LayerRepository;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -17,6 +23,8 @@ import java.util.Optional;
 @Slf4j
 public class LayerService {
     private final LayerRepository layerRepository;
+    @Value("${image.store}")
+    private String IMAGE_STORE;
 
     public List<Layer> getAll() {
         return layerRepository.findAll();
@@ -37,7 +45,14 @@ public class LayerService {
     }
 
     @Transactional
-    public Layer save(Layer layer) {
+    public Layer save(Layer layer, MultipartFile multipartFile) {
+        try {
+            String fileName = UUID.randomUUID() + ".svg";
+            Files.write(Path.of(String.format("%s/%s", IMAGE_STORE, fileName)), multipartFile.getBytes());
+            layer.setIconUrl(fileName);
+        } catch (IOException e) {
+
+        }
         return layerRepository.save(layer);
     }
 

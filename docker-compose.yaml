@@ -11,10 +11,11 @@ services:
       - "5430:5432"
 
   app:
-    build: .
+    build: ./layers-service/.
     environment:
       - SPRING_DATASOURCE_USERNAME=postgres
       - SPRING_DATASOURCE_PASSWORD=password
       - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/db
+      - IMAGE_STORE=
     ports:
       - "8080:8080"

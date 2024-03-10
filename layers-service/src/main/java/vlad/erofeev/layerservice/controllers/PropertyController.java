@@ -8,7 +8,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import vlad.erofeev.layerservice.domain.dto.ErrorResponse;
 import vlad.erofeev.layerservice.domain.dto.NewPropertyDTO;
-import vlad.erofeev.layerservice.domain.dto.PropertyDTO;
 import vlad.erofeev.layerservice.domain.dto.PropertyListItemDTO;
 import vlad.erofeev.layerservice.domain.entities.Property;
 import vlad.erofeev.layerservice.services.PropertyService;
@@ -21,17 +20,18 @@ import java.util.stream.Collectors;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/properties")
+@CrossOrigin
 @Slf4j
 public class PropertyController {
     private final PropertyService propertyService;
     private final PropertyMapper propertyMapper = PropertyMapper.INSTANCE;
 
     @PostMapping
-    public PropertyDTO save(@RequestBody NewPropertyDTO newPropertyDTO) {
+    public PropertyListItemDTO save(@RequestBody NewPropertyDTO newPropertyDTO) {
         log.info("POST /properties {}", newPropertyDTO);
         Property property = propertyMapper.convertToProperty(newPropertyDTO);
         Long layerId = PropsMapper.decodeId(newPropertyDTO.getLayerId());
-        return propertyMapper.convertToPropertyDTO(propertyService.save(property, layerId));
+        return propertyMapper.convertToPropertyListItemDTO(propertyService.save(property, layerId));
     }
 
     @GetMapping

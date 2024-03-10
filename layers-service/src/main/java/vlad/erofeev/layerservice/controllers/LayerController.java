@@ -6,6 +6,7 @@ import org.hibernate.ObjectNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import vlad.erofeev.layerservice.domain.dto.ErrorResponse;
 import vlad.erofeev.layerservice.domain.dto.LayerDTO;
 import vlad.erofeev.layerservice.domain.dto.LayerItemDTO;
@@ -22,6 +23,7 @@ import java.util.stream.Collectors;
 @RequestMapping("/layers")
 @RequiredArgsConstructor
 @Slf4j
+@CrossOrigin
 public class LayerController {
     private final LayerService layerService;
     private final LayerMapper layerMapper = LayerMapper.INSTANCE;
@@ -33,10 +35,11 @@ public class LayerController {
     }
 
     @PostMapping
-    public LayerItemDTO save(@RequestBody NewLayerDTO layerDTO) {
+    public LayerItemDTO save(@RequestPart("data") NewLayerDTO layerDTO,
+                             @RequestPart("image")MultipartFile multipartFile) {
         log.info("POST /layer {}", layerDTO.toString());
         Layer layer = layerMapper.convertToLayer(layerDTO);
-        return layerMapper.convertToLayerItemDTO(layerService.save(layer));
+        return layerMapper.convertToLayerItemDTO(layerService.save(layer, multipartFile));
     }
 
     @GetMapping("/{id}")
