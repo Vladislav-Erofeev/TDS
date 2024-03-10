@@ -10,12 +10,18 @@ services:
     ports:
       - "5430:5432"
 
-  app:
-    build: ./layers-service/.
-    environment:
-      - SPRING_DATASOURCE_USERNAME=postgres
-      - SPRING_DATASOURCE_PASSWORD=password
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/db
-      - IMAGE_STORE=
+  discovery:
+    build: ./discovery-service/.
     ports:
-      - "8080:8080"
+      - 8070:8070
+
+  layers_service:
+      build: ./layers-service/.
+      environment:
+        - SPRING_DATASOURCE_USERNAME=postgres
+        - SPRING_DATASOURCE_PASSWORD=password
+        - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/db
+        - IMAGE_STORE=
+        - EUREKA_CLIENT_SERVICE-URL_defaultZone=http://discovery:8070/eureka/
+      ports:
+        - "8080:8080"
