@@ -1,4 +1,4 @@
-package vlad.erofeev.sso.domain;
+package vlad.erofeev.sso.domain.dto;
 
 import lombok.Getter;
 import lombok.Setter;

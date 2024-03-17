@@ -38,9 +38,7 @@ public class AuthSecurityConfig {
                     httpSecuritySessionManagementConfigurer.sessionCreationPolicy(SessionCreationPolicy.NEVER);
                 })
                 .securityMatcher(endpointsMatcher)
-                .cors(cors -> {
-                    cors.configure(http);
-                }).csrf(AbstractHttpConfigurer::disable)
+                .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers("/register").permitAll()
                         .requestMatchers(HttpMethod.POST, "/register").permitAll()

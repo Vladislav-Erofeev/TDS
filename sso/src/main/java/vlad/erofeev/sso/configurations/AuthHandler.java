@@ -19,7 +19,7 @@ import org.springframework.security.oauth2.server.authorization.client.Registere
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
 import vlad.erofeev.sso.domain.PersonDetails;
-import vlad.erofeev.sso.domain.TokenInfo;
+import vlad.erofeev.sso.domain.dto.TokenInfo;
 
 import java.io.IOException;
 import java.util.HashMap;
