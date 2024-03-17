@@ -21,10 +21,12 @@ public class PersonService {
 
     @Transactional
     public void register(RegistrationRequest registrationRequest) {
-        Person person = new Person();
-        person.setEmail(registrationRequest.getEmail());
-        person.setPassword(passwordEncoder.encode(registrationRequest.getPassword()));
-        person.setRole(Roles.USER);
+        Person person = Person.builder()
+                .email(registrationRequest.getEmail())
+                .name(registrationRequest.getName())
+                .surname(registrationRequest.getSurname())
+                .role(Roles.USER)
+                .password(passwordEncoder.encode(registrationRequest.getPassword())).build();
         personRepository.save(person);
     }
 
