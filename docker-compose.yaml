@@ -1,27 +1,56 @@
 version: '3'
 
 services:
-  db:
+  discovery:
+    build: ./discovery-service
+    ports:
+      - "8070:8070"
+
+  gateway:
+    build: ./gateway
+    depends_on:
+      - discovery
+    environment:
+      - EUREKA_CLIENT_SERVICE-URL_defaultZone=http://discovery:8070/eureka/
+    ports:
+      - "8080:8080"
+
+  layers-db:
     image: postgres
     environment:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=password
       - POSTGRES_DB=db
-    ports:
-      - "5430:5432"
 
-  discovery:
-    build: ./discovery-service/.
+  auth-db:
+    image: postgres
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_DB=db
+
+  sso:
+    build: ./sso
+    depends_on:
+      - auth-db
+      - discovery
+    environment:
+      - SPRING_DATASOURCE_USERNAME=postgres
+      - SPRING_DATASOURCE_PASSWORD=password
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://auth-db:5432/db
+      - IMAGE_STORE=
+      - EUREKA_CLIENT_SERVICE-URL_defaultZone=http://discovery:8070/eureka/
     ports:
-      - 8070:8070
+      - "8082:8082"
 
   layers_service:
       build: ./layers-service/.
+      depends_on:
+        - layers-db
+        - discovery
       environment:
         - SPRING_DATASOURCE_USERNAME=postgres
         - SPRING_DATASOURCE_PASSWORD=password
-        - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/db
+        - SPRING_DATASOURCE_URL=jdbc:postgresql://layers-db:5432/db
         - IMAGE_STORE=
         - EUREKA_CLIENT_SERVICE-URL_defaultZone=http://discovery:8070/eureka/
-      ports:
-        - "8080:8080"
