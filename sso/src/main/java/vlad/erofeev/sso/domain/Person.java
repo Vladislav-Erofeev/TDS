@@ -14,6 +14,8 @@ public class Person {
 
     private String email;
     private String password;
+    private String name;
+    private String surname;
 
     @Enumerated(value = EnumType.STRING)
     private Roles role;
