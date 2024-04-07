@@ -4,8 +4,10 @@ package vlad.erofeev.layerservice.controllers;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
+import vlad.erofeev.layerservice.domain.dto.LayerDetailsDto;
 import vlad.erofeev.layerservice.domain.dto.LayerDto;
 import vlad.erofeev.layerservice.services.LayerService;
+import vlad.erofeev.layerservice.services.mappers.LayerDetailsMapper;
 import vlad.erofeev.layerservice.services.mappers.LayerMapper;
 import vlad.erofeev.layerservice.services.mappers.PropsMapper;
 
@@ -19,6 +21,7 @@ import java.util.stream.Collectors;
 public class LayerController {
     private final LayerService layerService;
     private final LayerMapper layerMapper = LayerMapper.INSTANCE;
+    private final LayerDetailsMapper layerDetailsMapper = LayerDetailsMapper.INSTANCE;
 
     @GetMapping
     public List<LayerDto> getAll() {
@@ -27,15 +30,15 @@ public class LayerController {
     }
 
     @PostMapping
-    public LayerDto save(@RequestBody LayerDto layerDto) {
+    public LayerDetailsDto save(@RequestBody LayerDetailsDto layerDto) {
         log.info("POST /layers {}", layerDto);
-        return layerMapper.toDto(layerService.save(layerMapper.toEntity(layerDto)));
+        return layerDetailsMapper.toDetailsDto(layerService.save(layerDetailsMapper.toEntity(layerDto)));
     }
 
     @GetMapping("/{id}")
-    public LayerDto getById(@PathVariable("id") String id) {
+    public LayerDetailsDto getById(@PathVariable("id") String id) {
         log.info("GET /layers/{}", id);
-        return layerMapper.toDto(layerService.getById(PropsMapper.decodeId(id)));
+        return layerDetailsMapper.toDetailsDto(layerService.getById(PropsMapper.decodeId(id)));
     }
 
     @DeleteMapping("/{id}")

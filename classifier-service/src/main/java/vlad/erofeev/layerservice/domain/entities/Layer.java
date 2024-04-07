@@ -36,4 +36,7 @@ public class Layer {
 
     @ManyToMany(mappedBy = "layers")
     private List<Attribute> attributes = new LinkedList<>();
+
+    @OneToMany(mappedBy = "layer")
+    private List<Code> codes = new LinkedList<>();
 }
