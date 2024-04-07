@@ -5,6 +5,8 @@ import lombok.Data;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.util.Date;
+import java.util.LinkedList;
+import java.util.List;
 
 @Entity
 @Data
@@ -32,4 +34,6 @@ public class Layer {
     @Column(name = "icon_url", nullable = false, length = Integer.MAX_VALUE)
     private String iconUrl;
 
+    @ManyToMany(mappedBy = "layers")
+    private List<Attribute> attributes = new LinkedList<>();
 }
