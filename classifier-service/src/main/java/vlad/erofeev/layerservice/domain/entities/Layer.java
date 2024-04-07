@@ -15,7 +15,7 @@ public class Layer {
     private String name;
 
     @Column(name = "h_name", nullable = false, length = Integer.MAX_VALUE)
-    private String hName;
+    private String hname;
 
     @Column(name = "geometry_type", nullable = false, length = Integer.MAX_VALUE)
     private String geometryType;
