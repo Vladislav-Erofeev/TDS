@@ -4,10 +4,10 @@ spring:
   cloud:
     gateway:
       routes:
-        - id: layer_route
-          uri: lb://layers
+        - id: classifier_route
+          uri: lb://classifier
           predicates:
-            - Path=/layers/**
+            - Path=/classifier/**
           filters:
             - StripPrefix=1
 

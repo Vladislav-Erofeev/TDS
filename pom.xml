@@ -38,7 +38,7 @@
     </dependencyManagement>
 
     <modules>
-        <module>layers-service</module>
+        <module>classifier-service</module>
         <module>discovery-service</module>
         <module>gateway</module>
         <module>sso</module>

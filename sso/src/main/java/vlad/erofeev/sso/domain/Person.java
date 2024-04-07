@@ -5,8 +5,10 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.CreationTimestamp;
 
 import javax.management.relation.Role;
+import java.util.Date;
 
 @Entity
 @Data
@@ -20,8 +22,16 @@ public class Person {
 
     private String email;
     private String password;
+    private Integer phone;
+    private String addr;
     private String name;
     private String surname;
+    private String lastname;
+    private Date birthDate;
+
+    @CreationTimestamp
+    private Date registrationDate;
+
 
     @Enumerated(value = EnumType.STRING)
     private Roles role;
