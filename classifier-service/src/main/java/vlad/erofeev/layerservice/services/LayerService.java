@@ -36,6 +36,14 @@ public class LayerService {
     }
 
     @Transactional
+    public Layer patchById(Layer layer, Long id) {
+        Layer oldLayer = getById(id);
+        layer.setId(oldLayer.getId());
+        layer.setCreationDate(oldLayer.getCreationDate());
+        return layerRepository.save(layer);
+    }
+
+    @Transactional
     public void deleteById(Long id) {
         layerRepository.deleteById(id);
     }

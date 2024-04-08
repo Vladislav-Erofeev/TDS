@@ -41,6 +41,13 @@ public class LayerController {
         return layerDetailsMapper.toDetailsDto(layerService.getById(PropsMapper.decodeId(id)));
     }
 
+    @PatchMapping("/{id}")
+    public LayerDetailsDto patchById(@PathVariable("id") String id,
+                                     @RequestBody LayerDetailsDto layerDetailsDto) {
+        log.info("PATCH /layers/{}", id);
+        return layerDetailsMapper.toDetailsDto(layerService.patchById(layerDetailsMapper.toEntity(layerDetailsDto), PropsMapper.decodeId(id)));
+    }
+
     @DeleteMapping("/{id}")
     public void deleteById(@PathVariable("id") String id) {
         log.info("DELETE /layers/{}", id);
