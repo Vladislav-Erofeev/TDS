@@ -5,6 +5,7 @@ import org.mapstruct.Mapping;
 import org.mapstruct.factory.Mappers;
 import vlad.erofeev.sso.domain.Person;
 import vlad.erofeev.sso.domain.dto.PersonDTO;
+import vlad.erofeev.sso.domain.dto.RegistrationRequest;
 
 @Mapper(uses = {PropsMapper.class})
 public interface PersonMapper {
@@ -17,4 +18,7 @@ public interface PersonMapper {
     @Mapping(source = "birthDate", target = "birthDate", qualifiedByName = "stringToDate")
     @Mapping(source = "registrationDate", target = "registrationDate", qualifiedByName = "stringToDate")
     Person toEntity(PersonDTO personDTO);
+
+    @Mapping(source = "birthDate", target = "birthDate", qualifiedByName = "stringToDate")
+    Person toEntity(RegistrationRequest registrationRequest);
 }

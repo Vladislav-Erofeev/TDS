@@ -1,15 +1,16 @@
 package vlad.erofeev.sso.controllers;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.core.OAuth2AuthenticatedPrincipal;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import vlad.erofeev.sso.domain.dto.ErrorResponse;
 import vlad.erofeev.sso.domain.dto.PersonDTO;
 import vlad.erofeev.sso.domain.dto.RegistrationRequest;
+import vlad.erofeev.sso.exceptions.PersonAlreadyExists;
 import vlad.erofeev.sso.services.PersonService;
 import vlad.erofeev.sso.services.mappers.PersonMapper;
 
@@ -24,8 +25,8 @@ public class UserController {
 
     @PreAuthorize("permitAll()")
     @PostMapping("/register")
-    public void register(@RequestBody RegistrationRequest registrationRequest) {
-        personService.register(registrationRequest);
+    public void register(@RequestBody RegistrationRequest registrationRequest) throws PersonAlreadyExists {
+        personService.register(personMapper.toEntity(registrationRequest));
     }
 
     @GetMapping("/profile")
@@ -38,5 +39,11 @@ public class UserController {
                                  @AuthenticationPrincipal OAuth2AuthenticatedPrincipal principal) {
         return personMapper.toDto(personService.edit(personMapper.toEntity(personDTO),
                 Objects.requireNonNull(principal.getAttribute("id"))));
+    }
+
+    @ExceptionHandler
+    public ResponseEntity<ErrorResponse> exceptionHandler(PersonAlreadyExists exists) {
+        ErrorResponse errorResponse = new ErrorResponse(exists.getMessage());
+        return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
     }
 }

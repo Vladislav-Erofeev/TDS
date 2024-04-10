@@ -8,6 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 import vlad.erofeev.sso.domain.Person;
 import vlad.erofeev.sso.domain.dto.RegistrationRequest;
 import vlad.erofeev.sso.domain.Roles;
+import vlad.erofeev.sso.exceptions.PersonAlreadyExists;
 import vlad.erofeev.sso.repositories.PersonRepository;
 
 import java.util.List;
@@ -21,13 +22,11 @@ public class PersonService {
     private final PasswordEncoder passwordEncoder;
 
     @Transactional
-    public void register(RegistrationRequest registrationRequest) {
-        Person person = Person.builder()
-                .email(registrationRequest.getEmail())
-                .name(registrationRequest.getName())
-                .surname(registrationRequest.getSurname())
-                .role(Roles.USER)
-                .password(passwordEncoder.encode(registrationRequest.getPassword())).build();
+    public void register(Person person) throws PersonAlreadyExists {
+        Optional<Person> optionalPerson = personRepository.findByEmail(person.getEmail());
+        if (optionalPerson.isPresent())
+            throw new PersonAlreadyExists(person.getEmail());
+        person.setPassword(passwordEncoder.encode(person.getPassword()));
         personRepository.save(person);
     }
 
