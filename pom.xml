@@ -42,6 +42,7 @@
         <module>discovery-service</module>
         <module>gateway</module>
         <module>sso</module>
+        <module>geodata</module>
     </modules>
 
 </project>
