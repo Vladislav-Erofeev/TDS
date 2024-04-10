@@ -2,32 +2,36 @@ package vlad.erofeev.sso.controllers;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.oauth2.core.OAuth2AuthenticatedPrincipal;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import vlad.erofeev.sso.domain.Roles;
 import vlad.erofeev.sso.domain.dto.PersonDTO;
-import vlad.erofeev.sso.domain.dto.RegistrationRequest;
 import vlad.erofeev.sso.services.PersonService;
 import vlad.erofeev.sso.services.mappers.PersonMapper;
 
-@RestController
+import java.util.List;
+import java.util.stream.Collectors;
+
+@RequestMapping("/persons")
+@PreAuthorize("hasAnyAuthority('ADMIN')")
 @RequiredArgsConstructor
-@PreAuthorize("hasAnyAuthority('USER', 'ADMIN')")
+@RestController
 public class PersonController {
     private final PersonService personService;
     private final PersonMapper personMapper = PersonMapper.INSTANCE;
 
-    @PreAuthorize("permitAll()")
-    @PostMapping("/register")
-    public void register(@RequestBody RegistrationRequest registrationRequest) {
-        personService.register(registrationRequest);
+    @GetMapping
+    public List<PersonDTO> getALl() {
+        return personService.getALl().stream().map(personMapper::toDto).collect(Collectors.toList());
     }
 
-    @GetMapping("/profile")
-    public PersonDTO getProfile(@AuthenticationPrincipal OAuth2AuthenticatedPrincipal principal) {
-        return personMapper.convertToPersonDTO(personService.getById(principal.getAttribute("id")));
+    @GetMapping("/{id}")
+    public PersonDTO getById(@PathVariable("id") long id) {
+        return personMapper.toDto(personService.getById(id));
+    }
+
+    @PostMapping("/{id}/role")
+    public PersonDTO setRoleToPerson(@PathVariable("id") int id,
+                                     @RequestParam("role")Roles role) {
+        return personMapper.toDto(personService.setPersonRole(id, role));
     }
 }

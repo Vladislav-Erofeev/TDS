@@ -10,6 +10,12 @@ spring:
             - Path=/classifier/**
           filters:
             - StripPrefix=1
+        - id: auth_route
+          uri: lb://auth
+          predicates:
+            - Path=/auth/**
+          filters:
+            - StripPrefix=1
 
 eureka:
   instance:

@@ -10,6 +10,7 @@ import vlad.erofeev.sso.domain.dto.RegistrationRequest;
 import vlad.erofeev.sso.domain.Roles;
 import vlad.erofeev.sso.repositories.PersonRepository;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -30,10 +31,32 @@ public class PersonService {
         personRepository.save(person);
     }
 
+    @Transactional
+    public Person edit(Person person, long id) {
+        Person oldPerson = getById(id);
+        person.setId(id);
+        person.setPassword(oldPerson.getPassword());
+        person.setEmail(oldPerson.getEmail());
+        person.setRegistrationDate(oldPerson.getRegistrationDate());
+        person.setRole(oldPerson.getRole());
+        return personRepository.save(person);
+    }
+
     public Person getById(Long id) {
         Optional<Person> optionalPerson = personRepository.findById(id);
         if (optionalPerson.isEmpty())
             throw new ObjectNotFoundException(id, "Person");
         return optionalPerson.get();
+    }
+
+    public List<Person> getALl() {
+        return personRepository.findAll();
+    }
+
+    @Transactional
+    public Person setPersonRole(long id, Roles role) {
+        Person person = getById(id);
+        person.setRole(role);
+        return personRepository.save(person);
     }
 }
