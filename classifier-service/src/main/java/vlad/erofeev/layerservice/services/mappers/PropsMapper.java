@@ -35,12 +35,12 @@ public interface PropsMapper {
     @Named("dateToString")
     static String dateToString(Date date) {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd.MM.yyyy");
-        return simpleDateFormat.format(date);
+        return date == null ? null : simpleDateFormat.format(date);
     }
 
     @Named("stringToDate")
     static Date parseDate(String date) throws ParseException {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd.MM.yyyy");
-        return simpleDateFormat.parse(date);
+        return date == null ? null : simpleDateFormat.parse(date);
     }
 }
