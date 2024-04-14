@@ -14,8 +14,10 @@ public interface LayerMapper {
     LayerMapper INSTANCE = Mappers.getMapper(LayerMapper.class);
 
     @Mapping(source = "id", target = "id", qualifiedByName = "encodeId")
+    @Mapping(source = "creationDate", target = "creationDate", qualifiedByName = "dateToString")
     LayerDto toDto(Layer layer);
 
     @Mapping(source = "id", target = "id", qualifiedByName = "decodeId")
+    @Mapping(source = "creationDate", target = "creationDate", qualifiedByName = "stringToDate")
     Layer toEntity(LayerDto layerDto);
 }
