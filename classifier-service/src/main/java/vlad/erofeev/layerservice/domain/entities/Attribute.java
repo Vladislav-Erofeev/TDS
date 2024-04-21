@@ -35,10 +35,7 @@ public class Attribute {
     @CreationTimestamp
     private Date creationDate;
 
-    @ManyToMany
-    @JoinTable(name = "attribute_layer",
-            joinColumns = @JoinColumn(name = "attribute_id"),
-            inverseJoinColumns = @JoinColumn(name = "layer_id"))
+    @ManyToMany(mappedBy = "attributes")
     private List<Layer> layers = new LinkedList<>();
 
 }

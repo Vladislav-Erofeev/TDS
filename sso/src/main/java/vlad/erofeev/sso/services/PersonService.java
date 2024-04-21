@@ -27,6 +27,7 @@ public class PersonService {
         if (optionalPerson.isPresent())
             throw new PersonAlreadyExists(person.getEmail());
         person.setPassword(passwordEncoder.encode(person.getPassword()));
+        person.setRole(Roles.USER);
         personRepository.save(person);
     }
 

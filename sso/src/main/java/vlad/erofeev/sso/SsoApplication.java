@@ -18,14 +18,4 @@ public class SsoApplication {
         SpringApplication.run(SsoApplication.class, args);
     }
 
-    @Bean
-    public WebMvcConfigurer configurer() {
-        return new WebMvcConfigurer() {
-            @Override
-            public void addCorsMappings(CorsRegistry registry) {
-                registry.addMapping("/**").allowedOrigins("*").allowedMethods("GET", "POST", "PUT", "DELETE");
-            }
-        };
-    }
-
 }

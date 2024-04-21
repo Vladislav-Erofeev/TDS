@@ -34,7 +34,10 @@ public class Layer {
     @Column(name = "icon_url", nullable = false, length = Integer.MAX_VALUE)
     private String iconUrl;
 
-    @ManyToMany(mappedBy = "layers")
+    @ManyToMany
+    @JoinTable(name = "attribute_layer",
+            joinColumns = @JoinColumn(name = "layer_id"),
+            inverseJoinColumns = @JoinColumn(name = "attribute_id"))
     private List<Attribute> attributes = new LinkedList<>();
 
     @OneToMany(mappedBy = "layer")

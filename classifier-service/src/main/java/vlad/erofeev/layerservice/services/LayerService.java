@@ -40,6 +40,9 @@ public class LayerService {
         Layer oldLayer = getById(id);
         layer.setId(oldLayer.getId());
         layer.setCreationDate(oldLayer.getCreationDate());
+        layer.getAttributes().forEach(attribute -> {
+            attribute.getLayers().add(layer);
+        });
         return layerRepository.save(layer);
     }
 

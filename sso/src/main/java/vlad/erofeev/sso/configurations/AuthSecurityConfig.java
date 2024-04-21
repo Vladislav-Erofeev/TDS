@@ -66,7 +66,9 @@ public class AuthSecurityConfig {
 //                    logout.logoutUrl("/logout")
 //                            .logoutSuccessUrl("http://192.168.1.221:3000/platform");
 //                });
-                .formLogin(Customizer.withDefaults());
+                .formLogin(Customizer.withDefaults()).logout(logout -> {
+                    logout.logoutUrl("/logout").logoutSuccessUrl("http://localhost:3000");
+                });
         return http.build();
     }
 
