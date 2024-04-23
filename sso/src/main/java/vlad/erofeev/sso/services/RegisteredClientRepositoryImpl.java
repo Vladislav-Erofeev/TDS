@@ -42,7 +42,6 @@ public class RegisteredClientRepositoryImpl implements RegisteredClientRepositor
                     .tokenSettings(TokenSettings.builder()
                             .accessTokenTimeToLive(Duration.ofHours(1)).build())
                     .build()
-
     );
 
     @Override

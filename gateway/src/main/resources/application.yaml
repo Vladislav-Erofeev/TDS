@@ -16,6 +16,12 @@ spring:
             - Path=/auth/**
           filters:
             - StripPrefix=1
+        - id: geodata_route
+          uri: lb://geodata
+          predicates:
+            - Path=/geodata/**
+          filters:
+            - StripPrefix=1
 
 eureka:
   instance:
