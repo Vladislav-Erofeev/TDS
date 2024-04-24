@@ -1,6 +1,7 @@
 package com.example.geodata.controllers;
 
 import com.example.geodata.domain.dto.ErrorResponse;
+import com.example.geodata.domain.dto.ItemDto;
 import com.example.geodata.domain.dto.NewItemDto;
 import com.example.geodata.domain.entities.Item;
 import com.example.geodata.mappers.ItemMapper;
@@ -10,6 +11,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.oauth2.core.OAuth2AuthenticatedPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.wololo.geojson.Feature;
 import org.wololo.jts2geojson.GeoJSONWriter;
@@ -22,23 +26,37 @@ import java.util.Objects;
 @RestController
 @RequestMapping("/objects")
 @RequiredArgsConstructor
+@PreAuthorize("hasAnyAuthority('USER', 'ADMIN')")
 public class ObjectController {
     private final ItemMapper itemMapper = ItemMapper.INSTANCE;
     private final ItemService itemService;
 
     @PostMapping
-    public void add(@RequestBody NewItemDto newItemDto) {
+    public void add(@RequestBody NewItemDto newItemDto,
+                    @AuthenticationPrincipal OAuth2AuthenticatedPrincipal principal) {
         Objects.requireNonNull(newItemDto.code(), "Code не может быть пустым");
         Objects.requireNonNull(newItemDto.feature(), "Геометрия не может быть пустой");
         switch (newItemDto.feature().getGeometry().getType()) {
-            case "Polygon" -> itemService.save(itemMapper.toPolygon(newItemDto));
-            case "LineString" -> itemService.save(itemMapper.toLine(newItemDto));
+            case "Polygon" -> itemService.save(itemMapper.toPolygon(newItemDto), principal.getAttribute("id"));
+            case "LineString" -> itemService.save(itemMapper.toLine(newItemDto), principal.getAttribute("id"));
         }
     }
 
+    @PreAuthorize("permitAll()")
     @GetMapping
     public List<Feature> getAll() {
         return itemService.getAll().stream().map(this::toFeature).toList();
+    }
+
+    @PreAuthorize("permitAll()")
+    @GetMapping("/{id}")
+    public ItemDto getById(@PathVariable("id") String id) {
+        return itemMapper.toDto(itemService.getById(PropsMapper.decodeId(id)));
+    }
+
+    @DeleteMapping("/{id}")
+    public void deleteById(@PathVariable("id") String id) {
+        itemService.deleteById(PropsMapper.decodeId(id));
     }
 
     private Feature toFeature(Item item) {

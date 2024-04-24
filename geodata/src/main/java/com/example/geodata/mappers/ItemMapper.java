@@ -1,6 +1,8 @@
 package com.example.geodata.mappers;
 
+import com.example.geodata.domain.dto.ItemDto;
 import com.example.geodata.domain.dto.NewItemDto;
+import com.example.geodata.domain.entities.Item;
 import com.example.geodata.domain.entities.Line;
 import com.example.geodata.domain.entities.Polygon;
 import org.mapstruct.Mapper;
@@ -18,4 +20,9 @@ public interface ItemMapper {
     @Mapping(source = "feature", target = "geometry", qualifiedByName = "featureToLine")
     @Mapping(source = "code", target = "codeId", qualifiedByName = "codeDtoToCodeId")
     Line toLine(NewItemDto newItemDto);
+
+    @Mapping(source = "id", target = "id", qualifiedByName = "encodeId")
+    @Mapping(source = "codeId", target = "codeId", qualifiedByName = "encodeId")
+    @Mapping(source = "creationDate", target = "creationDate", qualifiedByName = "dateToString")
+    ItemDto toDto(Item item);
 }
