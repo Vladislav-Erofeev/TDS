@@ -31,6 +31,13 @@ public class ItemService {
         itemRepository.deleteById(id);
     }
 
+    @Transactional
+    public void setCheckedById(Long id) {
+        Item item = getById(id);
+        item.setChecked(true);
+        itemRepository.save(item);
+    }
+
     public Item getById(Long id) {
         Optional<Item> optionalItem = itemRepository.findById(id);
         Objects.requireNonNull(optionalItem.orElse(null), "Объект не найден");

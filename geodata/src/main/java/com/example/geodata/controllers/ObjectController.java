@@ -54,6 +54,12 @@ public class ObjectController {
         return itemMapper.toDto(itemService.getById(PropsMapper.decodeId(id)));
     }
 
+    @PreAuthorize("hasAnyAuthority('ADMIN')")
+    @PostMapping("/{id}/check")
+    public void checkObject(@PathVariable("id") String id) {
+        itemService.setCheckedById(PropsMapper.decodeId(id));
+    }
+
     @DeleteMapping("/{id}")
     public void deleteById(@PathVariable("id") String id) {
         itemService.deleteById(PropsMapper.decodeId(id));
