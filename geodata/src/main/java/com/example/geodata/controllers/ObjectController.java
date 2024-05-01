@@ -49,6 +49,14 @@ public class ObjectController {
     }
 
     @PreAuthorize("permitAll()")
+    @GetMapping(params = {"added"})
+    public List<ItemDto> getAllAddedUsers(@AuthenticationPrincipal OAuth2AuthenticatedPrincipal principal,
+                                          @RequestParam(name = "added") Boolean added) {
+        return itemService.getAllByPersonId(principal.getAttribute("id"))
+                .stream().map(itemMapper::toDto).toList();
+    }
+
+    @PreAuthorize("permitAll()")
     @GetMapping("/{id}")
     public ItemDto getById(@PathVariable("id") String id) {
         return itemMapper.toDto(itemService.getById(PropsMapper.decodeId(id)));

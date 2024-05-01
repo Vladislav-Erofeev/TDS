@@ -47,4 +47,8 @@ public class ItemService {
     public List<Item> getAll() {
         return itemRepository.findAll();
     }
+
+    public List<Item> getAllByPersonId(Long personId) {
+        return itemRepository.findAllByPersonId(personId);
+    }
 }
