@@ -1,5 +1,7 @@
 package com.example.geodata.controllers;
 
+import com.example.geodata.clients.ClassifierServiceClient;
+import com.example.geodata.domain.dto.CodeDto;
 import com.example.geodata.domain.dto.ErrorResponse;
 import com.example.geodata.domain.dto.ItemDto;
 import com.example.geodata.domain.dto.NewItemDto;
@@ -29,6 +31,7 @@ import java.util.Objects;
 public class ObjectController {
     private final ItemMapper itemMapper = ItemMapper.INSTANCE;
     private final ItemService itemService;
+    private final ClassifierServiceClient client;
 
     @PostMapping
     public void add(@RequestBody NewItemDto newItemDto,
@@ -58,7 +61,11 @@ public class ObjectController {
     @PreAuthorize("permitAll()")
     @GetMapping("/{id}")
     public ItemDto getById(@PathVariable("id") String id) {
-        return itemMapper.toDto(itemService.getById(PropsMapper.decodeId(id)));
+        Item item = itemService.getById(PropsMapper.decodeId(id));
+        ItemDto itemDto = itemMapper.toDto(item);
+        CodeDto codeDto = client.getCodeById(PropsMapper.encodeId(item.getCodeId()));
+        itemDto.setCode(codeDto);
+        return itemDto;
     }
 
     @PreAuthorize("hasAnyAuthority('ADMIN')")

@@ -22,7 +22,7 @@ public interface ItemMapper {
     Line toLine(NewItemDto newItemDto);
 
     @Mapping(source = "id", target = "id", qualifiedByName = "encodeId")
-    @Mapping(source = "codeId", target = "codeId", qualifiedByName = "encodeId")
+    @Mapping(source = "codeId", target = "code", ignore = true)
     @Mapping(source = "creationDate", target = "creationDate", qualifiedByName = "dateToString")
     ItemDto toDto(Item item);
 }

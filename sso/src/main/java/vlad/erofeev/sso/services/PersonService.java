@@ -35,7 +35,7 @@ public class PersonService {
     }
 
     @Transactional
-    @CachePut(value = "#result", key = "#id")
+    @CachePut(key = "#id")
     public Person edit(Person person, long id) {
         Person oldPerson = getById(id);
         person.setId(id);
@@ -46,7 +46,7 @@ public class PersonService {
         return personRepository.save(person);
     }
 
-    @Cacheable(value = "#result", key = "#id", unless = "#result == null")
+    @Cacheable(key = "#id", unless = "#result == null")
     public Person getById(Long id) {
         Optional<Person> optionalPerson = personRepository.findById(id);
         if (optionalPerson.isEmpty())
@@ -59,7 +59,7 @@ public class PersonService {
     }
 
     @Transactional
-    @CachePut(value = "#result", key = "#id")
+    @CachePut(key = "#id")
     public Person setPersonRole(long id, Roles role) {
         Person person = getById(id);
         person.setRole(role);

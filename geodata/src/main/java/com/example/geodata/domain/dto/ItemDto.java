@@ -15,7 +15,7 @@ import java.util.Map;
 public class ItemDto {
     private String id;
     private String creationDate;
-    private String codeId;
+    private CodeDto code;
     private Boolean checked;
     private Map<String, Object> properties;
 }
