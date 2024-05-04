@@ -1,7 +1,6 @@
 package vlad.erofeev.layerservice.services;
 
 import lombok.RequiredArgsConstructor;
-import lombok.SneakyThrows;
 import org.hibernate.ObjectNotFoundException;
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.CacheEvict;
@@ -36,10 +35,8 @@ public class LayerService {
     }
 
     @Cacheable(key = "#id", unless = "#result == null")
-    @SneakyThrows
     public Layer getById(Long id) throws ObjectNotFoundException {
         Optional<Layer> optionalLayer = layerRepository.findById(id);
-        Thread.sleep(1000);
         if (optionalLayer.isEmpty())
             throw new ObjectNotFoundException(id, "Layer");
         return optionalLayer.get();

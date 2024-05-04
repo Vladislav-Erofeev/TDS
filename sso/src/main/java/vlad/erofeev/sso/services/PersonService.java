@@ -2,11 +2,13 @@ package vlad.erofeev.sso.services;
 
 import lombok.RequiredArgsConstructor;
 import org.hibernate.ObjectNotFoundException;
+import org.springframework.cache.annotation.CacheConfig;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import vlad.erofeev.sso.domain.Person;
-import vlad.erofeev.sso.domain.dto.RegistrationRequest;
 import vlad.erofeev.sso.domain.Roles;
 import vlad.erofeev.sso.exceptions.PersonAlreadyExists;
 import vlad.erofeev.sso.repositories.PersonRepository;
@@ -17,21 +19,23 @@ import java.util.Optional;
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
+@CacheConfig(cacheNames = "persons")
 public class PersonService {
     private final PersonRepository personRepository;
     private final PasswordEncoder passwordEncoder;
 
     @Transactional
-    public void register(Person person) throws PersonAlreadyExists {
+    public Person register(Person person) throws PersonAlreadyExists {
         Optional<Person> optionalPerson = personRepository.findByEmail(person.getEmail());
         if (optionalPerson.isPresent())
             throw new PersonAlreadyExists(person.getEmail());
         person.setPassword(passwordEncoder.encode(person.getPassword()));
         person.setRole(Roles.USER);
-        personRepository.save(person);
+        return personRepository.save(person);
     }
 
     @Transactional
+    @CachePut(value = "#result", key = "#id")
     public Person edit(Person person, long id) {
         Person oldPerson = getById(id);
         person.setId(id);
@@ -42,6 +46,7 @@ public class PersonService {
         return personRepository.save(person);
     }
 
+    @Cacheable(value = "#result", key = "#id", unless = "#result == null")
     public Person getById(Long id) {
         Optional<Person> optionalPerson = personRepository.findById(id);
         if (optionalPerson.isEmpty())
@@ -54,6 +59,7 @@ public class PersonService {
     }
 
     @Transactional
+    @CachePut(value = "#result", key = "#id")
     public Person setPersonRole(long id, Roles role) {
         Person person = getById(id);
         person.setRole(role);

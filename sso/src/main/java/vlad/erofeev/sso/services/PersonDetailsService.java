@@ -1,7 +1,6 @@
 package vlad.erofeev.sso.services;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
@@ -17,7 +16,7 @@ public class PersonDetailsService implements UserDetailsService {
     private final PersonRepository personRepository;
 
     @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+    public PersonDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         Optional<Person> optionalPerson = personRepository.findByEmail(username);
         if (optionalPerson.isEmpty())
             throw new UsernameNotFoundException(username);
