@@ -25,6 +25,7 @@ public class PersonService {
     private final PasswordEncoder passwordEncoder;
 
     @Transactional
+    @CachePut(key = "#person.id")
     public Person register(Person person) throws PersonAlreadyExists {
         Optional<Person> optionalPerson = personRepository.findByEmail(person.getEmail());
         if (optionalPerson.isPresent())

@@ -26,7 +26,6 @@ public class LayerService {
         return layerRepository.findAll();
     }
 
-    @CachePut(key = "#result.id")
     @Transactional
     public Layer save(Layer layer) {
         layer.setId(null);

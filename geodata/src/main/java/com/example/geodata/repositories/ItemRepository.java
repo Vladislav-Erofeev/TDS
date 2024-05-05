@@ -8,5 +8,7 @@ import java.util.List;
 
 @Repository
 public interface ItemRepository extends JpaRepository<Item, Long> {
-    List<Item> findAllByPersonId(Long personId);
+    List<Item> findAllByPersonIdOrderByCreationDateDesc(Long personId);
+
+    List<Item> findAllByCheckedIsFalse();
 }

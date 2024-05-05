@@ -49,6 +49,10 @@ public class ItemService {
     }
 
     public List<Item> getAllByPersonId(Long personId) {
-        return itemRepository.findAllByPersonId(personId);
+        return itemRepository.findAllByPersonIdOrderByCreationDateDesc(personId);
+    }
+
+    public List<Item> getAllByCheckedIsFalse() {
+        return itemRepository.findAllByCheckedIsFalse();
     }
 }

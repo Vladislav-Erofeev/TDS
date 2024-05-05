@@ -58,6 +58,12 @@ public class ObjectController {
                 .stream().map(itemMapper::toDto).toList();
     }
 
+    @PreAuthorize("hasAnyAuthority('ADMIN')")
+    @GetMapping(params = {"checked"})
+    public List<ItemDto> getAllNotChecked(@RequestParam("checked") Boolean checked) {
+        return itemService.getAllByCheckedIsFalse().stream().map(itemMapper::toDto).toList();
+    }
+
     @PreAuthorize("permitAll()")
     @GetMapping("/{id}")
     public ItemDto getById(@PathVariable("id") String id) {
