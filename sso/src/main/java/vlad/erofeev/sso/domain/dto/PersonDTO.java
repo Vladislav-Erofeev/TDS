@@ -14,7 +14,7 @@ import java.util.Date;
 public class PersonDTO {
     private String email;
     private String password;
-    private Integer phone;
+    private Long phone;
     private String addr;
     private String name;
     private String surname;

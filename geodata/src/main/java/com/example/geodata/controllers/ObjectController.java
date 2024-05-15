@@ -27,21 +27,26 @@ import java.util.Objects;
 @RestController
 @RequestMapping("/objects")
 @RequiredArgsConstructor
-@PreAuthorize("hasAnyAuthority('USER', 'ADMIN')")
+@PreAuthorize("isAuthenticated()")
 public class ObjectController {
     private final ItemMapper itemMapper = ItemMapper.INSTANCE;
     private final ItemService itemService;
     private final ClassifierServiceClient client;
 
     @PostMapping
-    public void add(@RequestBody NewItemDto newItemDto,
-                    @AuthenticationPrincipal OAuth2AuthenticatedPrincipal principal) {
+    public Feature add(@RequestBody NewItemDto newItemDto,
+                       @AuthenticationPrincipal OAuth2AuthenticatedPrincipal principal) {
         Objects.requireNonNull(newItemDto.code(), "Code не может быть пустым");
         Objects.requireNonNull(newItemDto.feature(), "Геометрия не может быть пустой");
         switch (newItemDto.feature().getGeometry().getType()) {
-            case "Polygon" -> itemService.save(itemMapper.toPolygon(newItemDto), principal.getAttribute("id"));
-            case "LineString" -> itemService.save(itemMapper.toLine(newItemDto), principal.getAttribute("id"));
+            case "Polygon" -> {
+                return toFeature(itemService.save(itemMapper.toPolygon(newItemDto), principal.getAttribute("id")));
+            }
+            case "LineString" -> {
+                return toFeature(itemService.save(itemMapper.toLine(newItemDto), principal.getAttribute("id")));
+            }
         }
+        return null;
     }
 
     @PreAuthorize("permitAll()")
@@ -52,13 +57,13 @@ public class ObjectController {
 
     @PreAuthorize("permitAll()")
     @GetMapping(params = {"added"})
-    public List<ItemDto> getAllAddedUsers(@AuthenticationPrincipal OAuth2AuthenticatedPrincipal principal,
+    public List<ItemDto> getAllByPersonId(@AuthenticationPrincipal OAuth2AuthenticatedPrincipal principal,
                                           @RequestParam(name = "added") Boolean added) {
         return itemService.getAllByPersonId(principal.getAttribute("id"))
                 .stream().map(itemMapper::toDto).toList();
     }
 
-    @PreAuthorize("hasAnyAuthority('ADMIN')")
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'MODERATOR')")
     @GetMapping(params = {"checked"})
     public List<ItemDto> getAllNotChecked(@RequestParam("checked") Boolean checked) {
         return itemService.getAllByCheckedIsFalse().stream().map(itemMapper::toDto).toList();
@@ -74,7 +79,24 @@ public class ObjectController {
         return itemDto;
     }
 
-    @PreAuthorize("hasAnyAuthority('ADMIN')")
+    @PreAuthorize("isAuthenticated()")
+    @PatchMapping("/{id}")
+    public ItemDto patchById(@PathVariable("id") Long id,
+                             @RequestBody NewItemDto newItemDto) {
+        switch (newItemDto.feature().getGeometry().getType()) {
+            case "Polygon" -> {
+                return itemMapper.toDto(itemService.editById(id, itemMapper.toPolygon(newItemDto)));
+            }
+            case "LineString" -> {
+                return itemMapper.toDto(itemService.editById(id, itemMapper.toLine(newItemDto)));
+            }
+            default -> {
+                return null;
+            }
+        }
+    }
+
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'MODERATOR')")
     @PostMapping("/{id}/check")
     public void checkObject(@PathVariable("id") String id) {
         itemService.setCheckedById(PropsMapper.decodeId(id));

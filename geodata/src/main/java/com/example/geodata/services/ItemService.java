@@ -18,12 +18,12 @@ public class ItemService {
     private final ItemRepository itemRepository;
 
     @Transactional
-    public void save(Item item, Long personId) {
+    public Item save(Item item, Long personId) {
         Objects.requireNonNull(item.getCodeId(), "Code не может быть пустым");
         item.setCreationDate(new Date());
         item.setPersonId(personId);
         item.setChecked(Boolean.FALSE);
-        itemRepository.save(item);
+        return itemRepository.save(item);
     }
 
     @Transactional
@@ -36,6 +36,16 @@ public class ItemService {
         Item item = getById(id);
         item.setChecked(true);
         itemRepository.save(item);
+    }
+
+    @Transactional
+    public Item editById(Long id, Item item) {
+        Item item1 = getById(id);
+        item.setChecked(false);
+        item.setCreationDate(item1.getCreationDate());
+        item.setPersonId(item1.getPersonId());
+        item.setId(id);
+        return itemRepository.save(item);
     }
 
     public Item getById(Long id) {

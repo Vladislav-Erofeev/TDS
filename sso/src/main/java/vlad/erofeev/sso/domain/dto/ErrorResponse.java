@@ -7,10 +7,9 @@ import lombok.Setter;
 @Setter
 public class ErrorResponse {
     private String message;
-    private long timestamp;
+    private long timestamp = System.currentTimeMillis();
 
     public ErrorResponse(String message) {
         this.message = message;
-        timestamp = System.currentTimeMillis();
     }
 }

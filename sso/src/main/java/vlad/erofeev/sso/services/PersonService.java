@@ -2,9 +2,6 @@ package vlad.erofeev.sso.services;
 
 import lombok.RequiredArgsConstructor;
 import org.hibernate.ObjectNotFoundException;
-import org.springframework.cache.annotation.CacheConfig;
-import org.springframework.cache.annotation.CachePut;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,13 +16,11 @@ import java.util.Optional;
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
-@CacheConfig(cacheNames = "persons")
 public class PersonService {
     private final PersonRepository personRepository;
     private final PasswordEncoder passwordEncoder;
 
     @Transactional
-    @CachePut(key = "#person.id")
     public Person register(Person person) throws PersonAlreadyExists {
         Optional<Person> optionalPerson = personRepository.findByEmail(person.getEmail());
         if (optionalPerson.isPresent())
@@ -36,7 +31,6 @@ public class PersonService {
     }
 
     @Transactional
-    @CachePut(key = "#id")
     public Person edit(Person person, long id) {
         Person oldPerson = getById(id);
         person.setId(id);
@@ -47,7 +41,6 @@ public class PersonService {
         return personRepository.save(person);
     }
 
-    @Cacheable(key = "#id", unless = "#result == null")
     public Person getById(Long id) {
         Optional<Person> optionalPerson = personRepository.findById(id);
         if (optionalPerson.isEmpty())
@@ -60,7 +53,6 @@ public class PersonService {
     }
 
     @Transactional
-    @CachePut(key = "#id")
     public Person setPersonRole(long id, Roles role) {
         Person person = getById(id);
         person.setRole(role);

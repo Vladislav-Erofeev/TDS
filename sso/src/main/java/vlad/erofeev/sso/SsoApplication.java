@@ -13,7 +13,6 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @SpringBootApplication
 @EnableDiscoveryClient
-@EnableCaching
 public class SsoApplication {
 
     public static void main(String[] args) {

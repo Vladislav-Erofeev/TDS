@@ -45,7 +45,7 @@ public class CodeController {
     public CodeDetailsDto patchById(@PathVariable("id") String id,
                                     @RequestBody CodeDetailsDto codeDetailsDto) {
         log.info("PATCH /codes/{} {}", codeDetailsDto, id);
-        return codeMapper.toDto(codeService.edit(codeMapper.toEntity(codeDetailsDto), PropsMapper.decodeId(id)));
+        return codeMapper.toDto(codeService.patchById(codeMapper.toEntity(codeDetailsDto), PropsMapper.decodeId(id)));
     }
 
     @DeleteMapping("/{id}")

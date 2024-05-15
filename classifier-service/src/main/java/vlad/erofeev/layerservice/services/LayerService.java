@@ -18,7 +18,6 @@ import java.util.Optional;
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
-@CacheConfig(cacheNames = "layer")
 public class LayerService {
     private final LayerRepository layerRepository;
 
@@ -33,7 +32,6 @@ public class LayerService {
         return layerRepository.save(layer);
     }
 
-    @Cacheable(key = "#id", unless = "#result == null")
     public Layer getById(Long id) throws ObjectNotFoundException {
         Optional<Layer> optionalLayer = layerRepository.findById(id);
         if (optionalLayer.isEmpty())
@@ -41,7 +39,6 @@ public class LayerService {
         return optionalLayer.get();
     }
 
-    @CachePut(key = "#id", unless = "#result == null")
     @Transactional
     public Layer patchById(Layer layer, Long id) {
         Layer oldLayer = getById(id);
@@ -55,7 +52,6 @@ public class LayerService {
         return layer;
     }
 
-    @CacheEvict(key = "#id")
     @Transactional
     public void deleteById(Long id) {
         layerRepository.deleteById(id);

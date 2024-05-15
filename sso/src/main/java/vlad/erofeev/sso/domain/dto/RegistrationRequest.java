@@ -8,7 +8,7 @@ import lombok.Setter;
 public class RegistrationRequest {
     private String email;
     private String password;
-    private Integer phone;
+    private Long phone;
     private String addr;
     private String name;
     private String surname;

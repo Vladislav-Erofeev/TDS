@@ -18,15 +18,15 @@ import java.util.Objects;
 
 @RestController
 @RequiredArgsConstructor
-@PreAuthorize("hasAnyAuthority('USER', 'ADMIN')")
+@PreAuthorize("isAuthenticated()")
 public class UserController {
     private final PersonService personService;
     private final PersonMapper personMapper = PersonMapper.INSTANCE;
 
     @PreAuthorize("permitAll()")
     @PostMapping("/register")
-    public void register(@RequestBody RegistrationRequest registrationRequest) throws PersonAlreadyExists {
-        personService.register(personMapper.toEntity(registrationRequest));
+    public PersonDTO register(@RequestBody RegistrationRequest registrationRequest) throws PersonAlreadyExists {
+        return personMapper.toDto(personService.register(personMapper.toEntity(registrationRequest)));
     }
 
     @GetMapping("/profile")
@@ -43,6 +43,7 @@ public class UserController {
 
     @ExceptionHandler
     public ResponseEntity<ErrorResponse> exceptionHandler(PersonAlreadyExists exists) {
+        System.out.println("exception");
         ErrorResponse errorResponse = new ErrorResponse(exists.getMessage());
         return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
     }

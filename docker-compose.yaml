@@ -1,4 +1,4 @@
-version: '3'
+version: '2'
 
 services:
   discovery:
@@ -15,15 +15,8 @@ services:
     ports:
       - "8080:8080"
 
-  layers-db:
-    image: postgres
-    environment:
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=password
-      - POSTGRES_DB=db
-
-  auth-db:
-    image: postgres
+  db:
+    image: postgis/postgis
     environment:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=password
@@ -31,26 +24,46 @@ services:
 
   sso:
     build: ./sso
+    restart: always
     depends_on:
-      - auth-db
+      - db
       - discovery
     environment:
       - SPRING_DATASOURCE_USERNAME=postgres
       - SPRING_DATASOURCE_PASSWORD=password
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://auth-db:5432/db
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/db
       - IMAGE_STORE=
       - EUREKA_CLIENT_SERVICE-URL_defaultZone=http://discovery:8070/eureka/
     ports:
       - "8082:8082"
 
   layers_service:
-      build: ./layers-service/.
+      build: ./classifier-service/.
+      restart: always
       depends_on:
-        - layers-db
+        - db
+        - sso
         - discovery
       environment:
         - SPRING_DATASOURCE_USERNAME=postgres
         - SPRING_DATASOURCE_PASSWORD=password
-        - SPRING_DATASOURCE_URL=jdbc:postgresql://layers-db:5432/db
-        - IMAGE_STORE=
+        - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/db
         - EUREKA_CLIENT_SERVICE-URL_defaultZone=http://discovery:8070/eureka/
+
+  geodata:
+    build: ./geodata/.
+    restart: always
+    depends_on:
+      - db
+      - sso
+      - layers_service
+    environment:
+      - SPRING_DATASOURCE_USERNAME=postgres
+      - SPRING_DATASOURCE_PASSWORD=password
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/db
+      - EUREKA_CLIENT_SERVICE-URL_defaultZone=http://discovery:8070/eureka/
+
+  adminer:
+    image: adminer
+    ports:
+      - "4040:8080"

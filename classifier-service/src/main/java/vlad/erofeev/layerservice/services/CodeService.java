@@ -41,7 +41,7 @@ public class CodeService {
     }
 
     @Transactional
-    public Code edit(Code code, Long id) {
+    public Code patchById(Code code, Long id) {
         Code oldCode = getById(id);
         code.setId(oldCode.getId());
         code.setCreationDate(oldCode.getCreationDate());
