@@ -50,7 +50,8 @@ public class AttributeService {
         Attribute oldAttribute = getById(id);
         attribute.setId(id);
         attribute.setCreationDate(oldAttribute.getCreationDate());
-        return attributeRepository.save(attribute);
+        attributeRepository.save(attribute);
+        return attribute;
     }
 
     @Transactional

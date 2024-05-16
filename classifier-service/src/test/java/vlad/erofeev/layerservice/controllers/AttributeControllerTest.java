@@ -26,6 +26,7 @@ import vlad.erofeev.layerservice.services.mappers.PropsMapper;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(AttributeController.class)
@@ -46,6 +47,24 @@ class AttributeControllerTest {
         mockMvc.perform(MockMvcRequestBuilders.get(uri))
                 .andExpect(status().is(404))
                 .andExpect(result -> assertEquals(ObjectNotFoundException.class, result.getResolvedException().getClass()));
+    }
+
+    @Test
+    void getById_ObjectFound_Object() throws Exception {
+        String uri = "/attributes/" + PropsMapper.encodeId(1L);
+        Attribute attribute = new Attribute();
+        attribute.setId(1L);
+        attribute.setName("name");
+        attribute.setHname("hname");
+        attribute.setDataType("INTEGER");
+        Mockito.when(attributeRepository.findById(Mockito.any())).thenReturn(Optional.of(attribute));
+
+        mockMvc.perform(MockMvcRequestBuilders.get(uri))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(PropsMapper.encodeId(1L)))
+                .andExpect(jsonPath("$.name").value("name"))
+                .andExpect(jsonPath("$.hname").value("hname"))
+                .andExpect(jsonPath("$.dataType").value("INTEGER"));
     }
 
     @Test
@@ -84,6 +103,25 @@ class AttributeControllerTest {
         mockMvc.perform(MockMvcRequestBuilders.patch(uri).contentType(MediaType.APPLICATION_JSON).content(content))
                 .andExpect(status().is(400))
                 .andExpect(result -> assertEquals(NullPointerException.class, result.getResolvedException().getClass()));
+    }
+
+    @Test
+    void patchById_ObjectExists_Object() throws Exception {
+        String uri = "/attributes/" + PropsMapper.encodeId(1L);
+        AttributeDetailsDto attributeDetailsDto = new AttributeDetailsDto();
+        attributeDetailsDto.setName("name");
+        attributeDetailsDto.setHname("hname");
+        attributeDetailsDto.setDataType("INTEGER");
+        Attribute oldAttribute = new Attribute();
+        Mockito.when(attributeRepository.findById(Mockito.any())).thenReturn(Optional.of(oldAttribute));
+        String content = objectMapper.writeValueAsString(attributeDetailsDto);
+
+        mockMvc.perform(MockMvcRequestBuilders.patch(uri).contentType(MediaType.APPLICATION_JSON).content(content))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(PropsMapper.encodeId(1L)))
+                .andExpect(jsonPath("$.name").value("name"))
+                .andExpect(jsonPath("$.hname").value("hname"))
+                .andExpect(jsonPath("$.dataType").value("INTEGER"));
     }
 
     @Test
