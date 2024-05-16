@@ -18,5 +18,4 @@ public class LayerDto {
     private String creationDate;
     private String description;
     private String example;
-    private List<CodeDto> codes = new LinkedList<>();
 }

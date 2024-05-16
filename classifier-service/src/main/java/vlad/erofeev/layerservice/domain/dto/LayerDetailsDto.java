@@ -21,6 +21,6 @@ public class LayerDetailsDto {
     private String creationDate;
     private String description;
     private String example;
-    private List<CodeDto> codes;
+    private List<CodeDto> codes = new LinkedList<>();
     private List<AttributeDto> attributes = new LinkedList<>();
 }

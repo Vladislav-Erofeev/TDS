@@ -54,6 +54,7 @@ public class CodeService {
         Code oldCode = getById(id);
         code.setId(oldCode.getId());
         code.setCreationDate(oldCode.getCreationDate());
-        return codeRepository.save(code);
+        codeRepository.save(code);
+        return code;
     }
 }
