@@ -1,11 +1,18 @@
 package vlad.erofeev.layerservice.domain.dto;
 
+import lombok.Getter;
+import lombok.Setter;
+
 import java.io.Serializable;
 import java.util.Date;
 
-/**
- * DTO for {@link vlad.erofeev.layerservice.domain.entities.Code}
- */
-public record CodeDetailsDto(String id, LayerDto layer, Integer code, String name, String description,
-                             String creationDate) implements Serializable {
+@Getter
+@Setter
+public class CodeDetailsDto {
+    private String id;
+    private LayerDto layer;
+    private Integer code;
+    private String name;
+    private String description;
+    private String creationDate;
 }

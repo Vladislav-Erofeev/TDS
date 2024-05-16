@@ -9,6 +9,7 @@ import vlad.erofeev.layerservice.repositories.CodeRepository;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @Service
@@ -19,6 +20,10 @@ public class CodeService {
 
     @Transactional
     public Code save(Code code) {
+        Objects.requireNonNull(code.getLayer(), "Layer cannot be null");
+        Objects.requireNonNull(code.getCode(), "Code cannot be null");
+        Objects.requireNonNull(code.getName(), "Name cannot be null");
+
         code.setId(null);
         code.setCreationDate(new Date());
         return codeRepository.save(code);
@@ -42,6 +47,10 @@ public class CodeService {
 
     @Transactional
     public Code patchById(Code code, Long id) {
+        Objects.requireNonNull(code.getLayer(), "Layer cannot be null");
+        Objects.requireNonNull(code.getCode(), "Code cannot be null");
+        Objects.requireNonNull(code.getName(), "Name cannot be null");
+
         Code oldCode = getById(id);
         code.setId(oldCode.getId());
         code.setCreationDate(oldCode.getCreationDate());

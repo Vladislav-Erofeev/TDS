@@ -103,6 +103,7 @@ class LayerControllerTest {
 
         Mockito.verify(layerRepository).save(capture.capture());
         assertNotNull(capture.getValue().getCreationDate());
+        assertNull(capture.getValue().getId());
     }
 
     @TestConfiguration
