@@ -59,15 +59,8 @@ public class AuthSecurityConfig {
                         c.opaqueToken(o -> {
                             o.introspector(opaqueTokenIntrospector());
                         }))
-//                .formLogin(formLogin -> {
-//                    formLogin.loginPage("/login")
-//                            .permitAll();
-//                }).logout(logout -> {
-//                    logout.logoutUrl("/logout")
-//                            .logoutSuccessUrl("http://192.168.1.221:3000/platform");
-//                });
                 .formLogin(Customizer.withDefaults()).logout(logout -> {
-                    logout.logoutUrl("/logout").logoutSuccessUrl("http://localhost:3000");
+                    logout.logoutUrl("/logout").logoutSuccessUrl("http://95.174.93.78:3000");
                 });
         return http.build();
     }

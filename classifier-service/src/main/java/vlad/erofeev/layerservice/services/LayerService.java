@@ -2,10 +2,6 @@ package vlad.erofeev.layerservice.services;
 
 import lombok.RequiredArgsConstructor;
 import org.hibernate.ObjectNotFoundException;
-import org.springframework.cache.annotation.CacheConfig;
-import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.CachePut;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import vlad.erofeev.layerservice.domain.entities.Layer;
@@ -13,6 +9,7 @@ import vlad.erofeev.layerservice.repositories.LayerRepository;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @Service
@@ -27,6 +24,10 @@ public class LayerService {
 
     @Transactional
     public Layer save(Layer layer) {
+        Objects.requireNonNull(layer.getName(), "Name cannot be null");
+        Objects.requireNonNull(layer.getHname(), "hName cannot be null");
+        Objects.requireNonNull(layer.getGeometryType(), "GeometryType cannot be null");
+
         layer.setId(null);
         layer.setCreationDate(new Date());
         return layerRepository.save(layer);
@@ -41,6 +42,10 @@ public class LayerService {
 
     @Transactional
     public Layer patchById(Layer layer, Long id) {
+        Objects.requireNonNull(layer.getName(), "Name cannot be null");
+        Objects.requireNonNull(layer.getHname(), "hName cannot be null");
+        Objects.requireNonNull(layer.getGeometryType(), "GeometryType cannot be null");
+
         Layer oldLayer = getById(id);
         layer.setId(oldLayer.getId());
         layer.setCreationDate(oldLayer.getCreationDate());

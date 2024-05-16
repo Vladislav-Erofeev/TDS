@@ -31,9 +31,6 @@ public class Layer {
     @Column(name = "example", length = Integer.MAX_VALUE)
     private String example;
 
-    @Column(name = "icon_url", nullable = false, length = Integer.MAX_VALUE)
-    private String iconUrl;
-
     @ManyToMany
     @JoinTable(name = "attribute_layer",
             joinColumns = @JoinColumn(name = "layer_id"),
