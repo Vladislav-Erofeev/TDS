@@ -2,9 +2,13 @@ package vlad.erofeev.layerservice.controllers;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.hibernate.ObjectNotFoundException;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import vlad.erofeev.layerservice.domain.dto.AttributeDetailsDto;
 import vlad.erofeev.layerservice.domain.dto.AttributeDto;
+import vlad.erofeev.layerservice.domain.dto.ErrorResponse;
 import vlad.erofeev.layerservice.services.AttributeService;
 import vlad.erofeev.layerservice.services.mappers.AttributeMapper;
 import vlad.erofeev.layerservice.services.mappers.PropsMapper;
@@ -50,5 +54,17 @@ public class AttributeController {
     public void deleteById(@PathVariable("id") String id) {
         log.info("DELETE /attributes/{}", id);
         attributeService.deleteById(PropsMapper.decodeId(id));
+    }
+
+    @ExceptionHandler
+    public ResponseEntity<ErrorResponse> objectNotFound(ObjectNotFoundException e) {
+        ErrorResponse errorResponse = new ErrorResponse(e.getMessage());
+        return new ResponseEntity<>(errorResponse, HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler
+    public ResponseEntity<ErrorResponse> nullFields(NullPointerException e) {
+        ErrorResponse errorResponse = new ErrorResponse(e.getMessage());
+        return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
     }
 }

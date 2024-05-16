@@ -10,6 +10,7 @@ import vlad.erofeev.layerservice.repositories.AttributeRepository;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @Service
@@ -20,6 +21,10 @@ public class AttributeService {
 
     @Transactional
     public Attribute save(Attribute attribute) {
+        Objects.requireNonNull(attribute.getName(), "Name cannot be null");
+        Objects.requireNonNull(attribute.getHname(), "Hname cannot be null");
+        Objects.requireNonNull(attribute.getDataType(), "DataType cannot be null");
+
         attribute.setId(null);
         attribute.setCreationDate(new Date());
         return attributeRepository.save(attribute);
@@ -38,6 +43,10 @@ public class AttributeService {
 
     @Transactional
     public Attribute patchById(Attribute attribute, Long id) {
+        Objects.requireNonNull(attribute.getName(), "Name cannot be null");
+        Objects.requireNonNull(attribute.getHname(), "Hname cannot be null");
+        Objects.requireNonNull(attribute.getDataType(), "DataType cannot be null");
+
         Attribute oldAttribute = getById(id);
         attribute.setId(id);
         attribute.setCreationDate(oldAttribute.getCreationDate());

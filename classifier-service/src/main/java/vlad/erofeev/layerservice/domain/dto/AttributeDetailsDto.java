@@ -1,8 +1,18 @@
 package vlad.erofeev.layerservice.domain.dto;
 
-import java.util.Date;
+import lombok.Getter;
+import lombok.Setter;
+
 import java.util.List;
 
-public record AttributeDetailsDto(String id, String name, String hname, String dataType, String description,
-                                  String creationDate, List<LayerDto> layers) {
+@Getter
+@Setter
+public class AttributeDetailsDto {
+    private String id;
+    private String name;
+    private String hname;
+    private String dataType;
+    private String description;
+    private String creationDate;
+    private List<LayerDto> layers;
 }

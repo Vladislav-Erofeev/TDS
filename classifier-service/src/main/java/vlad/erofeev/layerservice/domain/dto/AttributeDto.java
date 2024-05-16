@@ -1,11 +1,15 @@
 package vlad.erofeev.layerservice.domain.dto;
 
-import java.io.Serializable;
-import java.util.Date;
+import lombok.Getter;
+import lombok.Setter;
 
-/**
- * DTO for {@link vlad.erofeev.layerservice.domain.entities.Attribute}
- */
-public record AttributeDto(String id, String name, String hname, String dataType, String description,
-                           String creationDate) implements Serializable {
+@Getter
+@Setter
+public class AttributeDto {
+    private String id;
+    private String name;
+    private String hname;
+    private String dataType;
+    private String description;
+    private String creationDate;
 }
