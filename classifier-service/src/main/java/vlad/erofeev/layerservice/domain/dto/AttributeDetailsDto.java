@@ -3,6 +3,7 @@ package vlad.erofeev.layerservice.domain.dto;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.LinkedList;
 import java.util.List;
 
 @Getter
@@ -14,5 +15,5 @@ public class AttributeDetailsDto {
     private String dataType;
     private String description;
     private String creationDate;
-    private List<LayerDto> layers;
+    private List<LayerDto> layers = new LinkedList<>();
 }

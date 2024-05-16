@@ -5,6 +5,7 @@ import lombok.Setter;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.LinkedList;
 import java.util.List;
 
 @Getter
@@ -17,5 +18,5 @@ public class LayerDto {
     private String creationDate;
     private String description;
     private String example;
-    private List<CodeDto> codes;
+    private List<CodeDto> codes = new LinkedList<>();
 }

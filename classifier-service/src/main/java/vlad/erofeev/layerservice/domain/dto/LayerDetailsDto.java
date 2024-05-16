@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.util.Date;
+import java.util.LinkedList;
 import java.util.List;
 
 @Getter
@@ -21,5 +22,5 @@ public class LayerDetailsDto {
     private String description;
     private String example;
     private List<CodeDto> codes;
-    private List<AttributeDto> attributes;
+    private List<AttributeDto> attributes = new LinkedList<>();
 }

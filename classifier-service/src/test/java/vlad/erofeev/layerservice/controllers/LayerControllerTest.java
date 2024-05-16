@@ -49,6 +49,22 @@ class LayerControllerTest {
     }
 
     @Test
+    void getById_LayerExists_Layer() throws Exception {
+        String uri = "/layers/" + PropsMapper.encodeId(1L);
+        Layer layer = new Layer();
+        layer.setId(1L);
+        layer.setName("layer1");
+        layer.setHname("hname1");
+        layer.setDescription("description");
+        Mockito.when(layerRepository.findById(1L)).thenReturn(Optional.of(layer));
+        mockMvc.perform(MockMvcRequestBuilders.get(uri))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.name").value("layer1"))
+                .andExpect(jsonPath("$.description").value("description"))
+                .andExpect(jsonPath("$.hname").value("hname1"));
+    }
+
+    @Test
     void patchById_LayerNotFound_ThrowException() throws Exception {
         String uri = "/layers/" + PropsMapper.encodeId(1L);
         LayerDetailsDto layerDetailsDto = new LayerDetailsDto();
@@ -74,6 +90,25 @@ class LayerControllerTest {
                 .andExpect(status().is(400))
                 .andExpect(jsonPath("$.message").value("Name cannot be null"))
                 .andExpect(result -> assertEquals(NullPointerException.class, result.getResolvedException().getClass()));
+    }
+
+    @Test
+    void patchById_NewLayer_NewLayer() throws Exception {
+        String uri = "/layers/" + PropsMapper.encodeId(1L);
+        Layer layer = new Layer();
+        layer.setId(1L);
+        LayerDetailsDto layerDetailsDto = new LayerDetailsDto();
+        layerDetailsDto.setName("name");
+        layerDetailsDto.setHname("hname");
+        layerDetailsDto.setGeometryType("POLYGON");
+        String content = objectMapper.writeValueAsString(layerDetailsDto);
+        Mockito.when(layerRepository.findById(Mockito.any())).thenReturn(Optional.of(layer));
+
+        mockMvc.perform(MockMvcRequestBuilders.patch(uri).contentType(MediaType.APPLICATION_JSON).content(content))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.name").value("name"))
+                .andExpect(jsonPath("$.hname").value("hname"))
+                .andExpect(jsonPath("$.geometryType").value("POLYGON"));
     }
 
     @Test
