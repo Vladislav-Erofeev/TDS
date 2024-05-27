@@ -43,6 +43,7 @@
         <module>gateway</module>
         <module>sso</module>
         <module>geodata</module>
+        <module>search-service</module>
     </modules>
 
 </project>
