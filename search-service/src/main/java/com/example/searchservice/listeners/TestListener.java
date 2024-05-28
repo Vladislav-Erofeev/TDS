@@ -1,6 +1,6 @@
 package com.example.searchservice.listeners;
 
-import com.example.searchservice.messages.TestTableMessage;
+import com.example.searchservice.messages.ItemMessage;
 import com.example.searchservice.services.EsService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.kafka.annotation.KafkaListener;
@@ -14,17 +14,15 @@ import java.io.IOException;
 public class TestListener {
     private final EsService esService;
 
-    @KafkaListener(topics = "postgres.public.test", concurrency = "5",
+    @KafkaListener(topics = "db.public.item", concurrency = "5",
             containerFactory = "tableMessageConcurrentKafkaListenerContainerFactory")
-    public void handleTest(@Payload(required = false) TestTableMessage message) throws IOException {
+    public void handleTest(@Payload(required = false) ItemMessage message) throws IOException {
         if (message == null)
             return;
         switch (message.getOp()) {
-            case "c" -> esService.save(message.getAfter().getId().toString(), message.getAfter().getTitle(),
-                    message.getAfter().getBody());
-            case "u" -> esService.updateById(message.getBefore().getId().toString(), message.getAfter().getTitle(),
-                    message.getAfter().getBody());
-            case "d" -> esService.deleteById(message.getBefore().getId().toString());
+            case c -> esService.save(String.valueOf(message.getAfter().getId()), message.getAfter());
+            case d -> esService.deleteById(String.valueOf(message.getBefore().getId()));
+            case u -> esService.updateById(String.valueOf(message.getAfter().getId()), message.getAfter());
         }
     }
 }

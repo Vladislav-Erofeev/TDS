@@ -2,7 +2,7 @@ version: '3'
 
 services:
   db:
-    image: postgres
+    image: postgis/postgis
     environment:
       - POSTGRES_USER=postgres
       - POSTGRES_DB=db
@@ -28,7 +28,7 @@ services:
       - KAFKA_INTER_BROKER_LISTENER_NAME=PLAINTEXT
       - KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR=1
 
-  connect:
+  debezium:
     image: debezium/connect
     ports:
       - "8083:8083"
@@ -41,10 +41,18 @@ services:
     depends_on:
       - zookeeper
       - kafka
+
+  elasticsearch:
+    image: elasticsearch:7.17.21
+    ports:
+      - "9200:9200"
+    environment:
+      - discovery.type=single-node
+
   kafka-ui:
     container_name: kafka-ui
     image: provectuslabs/kafka-ui:latest
     ports:
-      - 8080:8080
+      - 9000:8080
     environment:
       DYNAMIC_CONFIG_ENABLED: true

@@ -7,6 +7,11 @@ create table if not exists item(
     person_id int references person(id) on delete set null,
     creation_date timestamp without time zone not null,
     checked boolean default false,
+    name varchar,
+    addr_country varchar,
+    addr_city varchar,
+    addr_street varchar,
+    addr_housenumber varchar,
     properties jsonb,
     polygon geometry(Polygon, 4326),
     line geometry(LineString, 4326)

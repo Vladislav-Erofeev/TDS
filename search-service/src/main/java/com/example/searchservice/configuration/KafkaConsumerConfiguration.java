@@ -1,6 +1,6 @@
 package com.example.searchservice.configuration;
 
-import com.example.searchservice.messages.TestTableMessage;
+import com.example.searchservice.messages.ItemMessage;
 import org.apache.kafka.clients.admin.NewTopic;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.common.serialization.StringDeserializer;
@@ -26,13 +26,16 @@ public class KafkaConsumerConfiguration {
     @Value("${spring.kafka.consumer.group-id}")
     private String groupId;
 
+    @Value("${kafka.topic.name}")
+    private String kafkaTopicName;
+
     @Bean
     public NewTopic newTopic() {
-        return TopicBuilder.name("postgres.public.test").build();
+        return TopicBuilder.name(kafkaTopicName).build();
     }
 
     @Bean
-    public ConsumerFactory<String, TestTableMessage> consumerFactory() {
+    public ConsumerFactory<String, ItemMessage> consumerFactory() {
         Map<String, Object> props = new HashMap<>();
         props.put(
                 ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG,
@@ -51,13 +54,13 @@ public class KafkaConsumerConfiguration {
                 "earliest");
         return new DefaultKafkaConsumerFactory<>(props,
                 new StringDeserializer(),
-                new JsonDeserializer<>(TestTableMessage.class));
+                new JsonDeserializer<>(ItemMessage.class));
     }
 
     @Bean
-    public ConcurrentKafkaListenerContainerFactory<String, TestTableMessage>
+    public ConcurrentKafkaListenerContainerFactory<String, ItemMessage>
     tableMessageConcurrentKafkaListenerContainerFactory() {
-        ConcurrentKafkaListenerContainerFactory<String, TestTableMessage> containerFactory =
+        ConcurrentKafkaListenerContainerFactory<String, ItemMessage> containerFactory =
                 new ConcurrentKafkaListenerContainerFactory<>();
         containerFactory.setConsumerFactory(consumerFactory());
         return containerFactory;

@@ -1,6 +1,5 @@
 package com.example.geodata.domain.entities;
 
-import com.fasterxml.jackson.annotation.JsonSubTypes;
 import io.hypersistence.utils.hibernate.type.json.JsonBinaryType;
 import jakarta.persistence.*;
 import lombok.Data;
@@ -9,7 +8,6 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.DiscriminatorFormula;
 import org.hibernate.annotations.Type;
 import org.locationtech.jts.geom.Geometry;
-import org.locationtech.jts.geom.Polygon;
 
 import java.util.Date;
 import java.util.HashMap;
@@ -30,6 +28,12 @@ public abstract class Item {
     private Date creationDate;
     private Long codeId;
     private Boolean checked;
+
+    private String name;
+    private String addrCountry;
+    private String addrCity;
+    private String addrStreet;
+    private String addrHousenumber;
 
     @Type(JsonBinaryType.class)
     private Map<String, Object> properties = new HashMap<>();

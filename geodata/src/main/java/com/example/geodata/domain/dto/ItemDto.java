@@ -12,5 +12,10 @@ public class ItemDto {
     private String creationDate;
     private CodeDto code;
     private Boolean checked;
+    private String name;
+    private String addrCountry;
+    private String addrCity;
+    private String addrStreet;
+    private String addrHousenumber;
     private Map<String, Object> properties;
 }
