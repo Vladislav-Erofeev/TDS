@@ -12,6 +12,7 @@ import org.elasticsearch.action.update.UpdateRequest;
 import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.client.RestHighLevelClient;
 import org.elasticsearch.common.unit.Fuzziness;
+import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.Operator;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.SearchHit;
@@ -52,17 +53,7 @@ public class EsService {
     public List<Item> search(String query) throws IOException {
         SearchRequest searchRequest = new SearchRequest(elasticsearchProperties.getItemIndex());
         SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
-        searchSourceBuilder.query(QueryBuilders.boolQuery()
-                .must(QueryBuilders
-                        .matchQuery(elasticsearchProperties.getCombinedField(), query)
-                        .operator(Operator.AND)
-                        .fuzziness(Fuzziness.AUTO))
-                .should(
-                        QueryBuilders.matchQuery(elasticsearchProperties.getNameField(), query)
-                                .operator(Operator.AND)
-                                .fuzziness(Fuzziness.AUTO)
-                )
-        );
+        searchSourceBuilder.query(buildBoolQuery(query));
         searchSourceBuilder.size(elasticsearchProperties.getSearchLimit());
         searchRequest.source(searchSourceBuilder);
 
@@ -73,18 +64,8 @@ public class EsService {
     public List<Item> searchWithFilters(String query, List<Long> codes) throws IOException {
         SearchRequest searchRequest = new SearchRequest(elasticsearchProperties.getItemIndex());
         SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
-        searchSourceBuilder.query(QueryBuilders.boolQuery()
-                .must(QueryBuilders
-                        .matchQuery(elasticsearchProperties.getCombinedField(), query)
-                        .operator(Operator.AND)
-                        .fuzziness(Fuzziness.AUTO))
-                .should(
-                        QueryBuilders.matchQuery(elasticsearchProperties.getNameField(), query)
-                                .operator(Operator.AND)
-                                .fuzziness(Fuzziness.AUTO)
-                )
-                .filter(QueryBuilders.termsQuery("code_id", codes))
-        );
+        searchSourceBuilder.query(buildBoolQuery(query)
+                .filter(QueryBuilders.termsQuery("code_id", codes)));
         searchSourceBuilder.size(elasticsearchProperties.getSearchLimit());
         searchRequest.source(searchSourceBuilder);
 
@@ -103,5 +84,18 @@ public class EsService {
         item.setAddr_street((String) data.getOrDefault("addr_street", null));
         item.setAddr_housenumber((String) data.getOrDefault("addr_housenumber", null));
         return item;
+    }
+
+    private BoolQueryBuilder buildBoolQuery(String query) {
+        return QueryBuilders.boolQuery()
+                .must(QueryBuilders
+                        .matchQuery(elasticsearchProperties.getCombinedField(), query)
+                        .operator(Operator.AND)
+                        .fuzziness(Fuzziness.AUTO))
+                .should(
+                        QueryBuilders.matchQuery(elasticsearchProperties.getNameField(), query)
+                                .operator(Operator.AND)
+                                .fuzziness(Fuzziness.AUTO)
+                );
     }
 }
