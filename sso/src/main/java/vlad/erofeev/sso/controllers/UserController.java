@@ -25,8 +25,12 @@ public class UserController {
 
     @PreAuthorize("permitAll()")
     @PostMapping("/register")
-    public PersonDTO register(@RequestBody RegistrationRequest registrationRequest) throws PersonAlreadyExists {
-        return personMapper.toDto(personService.register(personMapper.toEntity(registrationRequest)));
+    public ResponseEntity<PersonDTO> register(@RequestBody RegistrationRequest registrationRequest) throws PersonAlreadyExists {
+        try {
+            return ResponseEntity.ok(personMapper.toDto(personService.register(personMapper.toEntity(registrationRequest))));
+        } catch (Exception e) {
+            return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
+        }
     }
 
     @GetMapping("/profile")
@@ -39,12 +43,5 @@ public class UserController {
                                  @AuthenticationPrincipal OAuth2AuthenticatedPrincipal principal) {
         return personMapper.toDto(personService.edit(personMapper.toEntity(personDTO),
                 Objects.requireNonNull(principal.getAttribute("id"))));
-    }
-
-    @ExceptionHandler
-    public ResponseEntity<ErrorResponse> exceptionHandler(PersonAlreadyExists exists) {
-        System.out.println("exception");
-        ErrorResponse errorResponse = new ErrorResponse(exists.getMessage());
-        return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
     }
 }
