@@ -32,6 +32,9 @@ public class Attribute {
     @Column(name = "description", length = Integer.MAX_VALUE)
     private String description;
 
+    @Column(name = "required")
+    private Boolean required;
+
     @CreationTimestamp
     private Date creationDate;
 

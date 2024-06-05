@@ -13,6 +13,7 @@ public class AttributeDetailsDto {
     private String name;
     private String hname;
     private String dataType;
+    private Boolean required;
     private String description;
     private String creationDate;
     private List<LayerDto> layers = new LinkedList<>();

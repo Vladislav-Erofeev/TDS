@@ -10,6 +10,7 @@ public class AttributeDto {
     private String name;
     private String hname;
     private String dataType;
+    private Boolean required;
     private String description;
     private String creationDate;
 }
