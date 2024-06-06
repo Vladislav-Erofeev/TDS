@@ -11,7 +11,7 @@ import java.io.IOException;
 
 @Component
 @RequiredArgsConstructor
-public class TestListener {
+public class EsListener {
     private final EsService esService;
 
     @KafkaListener(topics = "db.public.item", concurrency = "5",
@@ -20,9 +20,10 @@ public class TestListener {
         if (message == null)
             return;
         switch (message.getOp()) {
-            case c -> esService.save(String.valueOf(message.getAfter().getId()), message.getAfter());
-            case d -> esService.deleteById(String.valueOf(message.getBefore().getId()));
-            case u -> esService.updateById(String.valueOf(message.getAfter().getId()), message.getAfter());
+            case c -> esService.save(message.getAfter().getId(), message.getAfter());
+            case d -> esService.deleteById(message.getBefore().getId());
+            case u -> esService.updateById(message.getAfter().getId(), message.getAfter());
+            case r -> esService.validateItem(message.getAfter().getId(), message.getAfter());
         }
     }
 }
