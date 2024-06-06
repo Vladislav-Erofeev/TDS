@@ -26,6 +26,6 @@ public class EsController {
     @GetMapping(value = "/search", params = {"query", "codes"})
     public List<Item> searchWithFilters(@RequestParam("query") String query, @RequestParam("codes") List<Long> codes) throws IOException {
         log.info("GET /search query={} codes={}", query, codes);
-        return esService.searchWithFilters(query, codes);
+        return esService.searchByQueryAndCodesIn(query, codes);
     }
 }
