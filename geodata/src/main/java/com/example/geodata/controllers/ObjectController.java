@@ -72,11 +72,7 @@ public class ObjectController {
     @PreAuthorize("permitAll()")
     @GetMapping("/{id}")
     public ItemDto getById(@PathVariable("id") String id) {
-        Item item = itemService.getById(PropsMapper.decodeId(id));
-        ItemDto itemDto = itemMapper.toDto(item);
-        CodeDto codeDto = client.getCodeById(PropsMapper.encodeId(item.getCodeId()));
-        itemDto.setCode(codeDto);
-        return itemDto;
+        return itemMapper.toDto(itemService.getById(PropsMapper.decodeId(id)));
     }
 
     @PreAuthorize("isAuthenticated()")
