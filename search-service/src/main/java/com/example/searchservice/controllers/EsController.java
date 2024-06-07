@@ -29,9 +29,10 @@ public class EsController {
     }
 
     @GetMapping(value = "/search", params = {"query", "codes"})
-    public List<ItemDto> searchWithFilters(@RequestParam("query") String query, @RequestParam("codes") List<Long> codes) throws IOException {
+    public List<ItemDto> searchWithFilters(@RequestParam("query") String query, @RequestParam("codes") List<String> codes) throws IOException {
         log.info("GET /search query={} codes={}", query, codes);
-        return esService.searchByQueryAndCodesIn(query, codes).stream().map(this::toDto).toList();
+        return esService.searchByQueryAndCodesIn(query, codes.stream().map(this::hashToId).toList())
+                .stream().map(this::toDto).toList();
     }
 
     private ItemDto toDto(Item item) {
@@ -44,5 +45,9 @@ public class EsController {
         itemDto.setAddr_street(item.getAddr_street());
         itemDto.setAddr_housenumber(item.getAddr_housenumber());
         return itemDto;
+    }
+
+    private Long hashToId(String hash) {
+        return hashids.decode(hash)[0];
     }
 }
