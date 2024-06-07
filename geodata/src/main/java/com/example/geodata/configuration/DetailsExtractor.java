@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.Map;
 
 public class DetailsExtractor implements OpaqueTokenIntrospector {
-    private final OpaqueTokenIntrospector delegate = new SpringOpaqueTokenIntrospector("http://sso:8082/oauth2/introspect",
+    private final OpaqueTokenIntrospector delegate = new SpringOpaqueTokenIntrospector("http://localhost:8082/oauth2/introspect",
             "resource", "secret");
 
     @Override

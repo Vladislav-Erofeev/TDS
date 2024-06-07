@@ -10,7 +10,7 @@ import java.util.Map;
 public class ItemDto {
     private String id;
     private String creationDate;
-    private CodeDto code;
+    private String code;
     private Boolean checked;
     private String name;
     private String addrCountry;
