@@ -1,4 +1,4 @@
-package com.example.searchservice.messages;
+package com.example.searchservice.entities;
 
 import lombok.Getter;
 import lombok.Setter;

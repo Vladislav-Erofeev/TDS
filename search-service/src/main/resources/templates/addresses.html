@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<script>
+    window.addEventListener('load', function() {
+        let message = { height: document.body.scrollHeight, width: document.body.scrollWidth };
+        window.top.postMessage(message, "*");
+    });
+</script>
+<style>
+    .row {
+        display: flex;
+        gap: 10px;
+        align-items: center;
+    }
+</style>
+<body>
+<div th:each="addr : ${list}" class="row">
+    <h3 th:text="${addr.getRequest()}"></h3>
+    <h3 th:if="${addr.getItem() != null}" th:text="${addr.getItem().getId()}"></h3>
+    <h3 th:unless="${addr.getItem() != null}">null</h3>
+</div>
+</body>
+</html>

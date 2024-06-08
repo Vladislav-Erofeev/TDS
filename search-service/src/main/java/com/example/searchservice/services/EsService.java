@@ -1,12 +1,13 @@
 package com.example.searchservice.services;
 
-import com.example.searchservice.messages.Item;
+import com.example.searchservice.entities.Item;
 import com.example.searchservice.repositories.EsRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -27,6 +28,10 @@ public class EsService {
 
     public List<Item> search(String query) throws IOException {
         return esRepository.search(query);
+    }
+
+    public Optional<Item> findBestMatch(String query) throws IOException {
+        return esRepository.findBestMatch(query);
     }
 
     public List<Item> searchByQueryAndCodesIn(String query, List<Long> codes) throws IOException {

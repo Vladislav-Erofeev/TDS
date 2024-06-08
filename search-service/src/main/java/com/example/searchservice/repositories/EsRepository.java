@@ -1,7 +1,7 @@
 package com.example.searchservice.repositories;
 
 import com.example.searchservice.configuration.ElasticsearchProperties;
-import com.example.searchservice.messages.Item;
+import com.example.searchservice.entities.Item;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.elasticsearch.action.delete.DeleteRequest;
@@ -24,6 +24,7 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @Repository
 @RequiredArgsConstructor
@@ -69,6 +70,19 @@ public class EsRepository {
 
         SearchResponse response = highLevelClient.search(searchRequest, RequestOptions.DEFAULT);
         return Arrays.stream(response.getHits().getHits()).map(this::mapSourceToItem).toList();
+    }
+
+    public Optional<Item> findBestMatch(String query) throws IOException {
+        SearchRequest searchRequest = new SearchRequest(elasticsearchProperties.getItemIndex());
+        SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
+        searchSourceBuilder.query(buildBoolQuery(query));
+        searchSourceBuilder.size(elasticsearchProperties.getSearchLimit());
+        searchRequest.source(searchSourceBuilder);
+        searchSourceBuilder.size(1);
+
+        SearchResponse response = highLevelClient.search(searchRequest, RequestOptions.DEFAULT);
+        return response.getHits().getHits().length == 0 ? Optional.empty()
+                : Optional.of(mapSourceToItem(response.getHits().getHits()[0]));
     }
 
     public List<Item> searchByQueryAndCodesIn(String query, List<Long> codes) throws IOException {
