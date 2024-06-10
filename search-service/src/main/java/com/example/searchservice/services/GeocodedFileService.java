@@ -20,6 +20,6 @@ public class GeocodedFileService {
     }
 
     public List<GeocodedFile> getAllByPersonId(Long personId) {
-        return geocodedFileRepository.findAllByPersonId(personId);
+        return geocodedFileRepository.findAllByPersonIdOrderByCreationDateDesc(personId);
     }
 }

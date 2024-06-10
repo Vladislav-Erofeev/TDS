@@ -8,5 +8,5 @@ import java.util.List;
 
 @Repository
 public interface GeocodedFileRepository extends JpaRepository<GeocodedFile, Long> {
-    List<GeocodedFile> findAllByPersonId(Long personId);
+    List<GeocodedFile> findAllByPersonIdOrderByCreationDateDesc(Long personId);
 }
