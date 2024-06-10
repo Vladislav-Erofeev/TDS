@@ -42,7 +42,7 @@ public class GeocodingService {
             Files.createDirectory(Path.of(pathConfig.getPath(), pathConfig.getGeocodingReport()));
     }
 
-    public GeocodedFile saveFile(MultipartFile file, Long personId) throws IOException {
+    public void saveFile(MultipartFile file, Long personId) throws IOException {
         GeocodedFile geocodedFile = GeocodedFile.builder()
                 .creationDate(new Date())
                 .personId(personId)
@@ -67,7 +67,6 @@ public class GeocodingService {
                 throw new RuntimeException(e);
             }
         });
-        return geocodedFile;
     }
 
     private void processAddresses(Path file, String fileName, GeocodedFile geocodedFile) throws IOException {

@@ -27,9 +27,9 @@ public class GeocodingController {
     private final NotificationService notificationService;
 
     @PostMapping
-    public GeocodedFile geocoding(@RequestPart("file") MultipartFile file,
+    public void geocoding(@RequestPart("file") MultipartFile file,
                                   @AuthenticationPrincipal OAuth2AuthenticatedPrincipal principal) throws IOException {
-        return geocodingService.saveFile(file, principal.getAttribute("id"));
+        geocodingService.saveFile(file, principal.getAttribute("id"));
     }
 
     @GetMapping(value = "/notification-stream", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
