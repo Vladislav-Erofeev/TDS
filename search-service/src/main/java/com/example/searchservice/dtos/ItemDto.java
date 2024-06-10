@@ -1,4 +1,4 @@
-package com.example.searchservice.dos;
+package com.example.searchservice.dtos;
 
 import lombok.Getter;
 import lombok.Setter;

@@ -11,7 +11,6 @@ import org.springframework.scheduling.annotation.EnableAsync;
 
 @Configuration
 @RequiredArgsConstructor
-@EnableAsync
 @EnableDiscoveryClient
 public class EsConfig {
     private final ElasticsearchProperties elasticsearchProperties;

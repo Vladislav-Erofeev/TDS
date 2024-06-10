@@ -1,13 +1,12 @@
 package com.example.searchservice.controllers;
 
-import com.example.searchservice.dos.ItemDto;
+import com.example.searchservice.dtos.ItemDto;
 import com.example.searchservice.entities.Item;
 import com.example.searchservice.services.EsService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.hashids.Hashids;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;

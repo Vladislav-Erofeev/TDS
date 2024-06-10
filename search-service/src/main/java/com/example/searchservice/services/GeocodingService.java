@@ -1,6 +1,7 @@
 package com.example.searchservice.services;
 
-import com.example.searchservice.dos.ItemDto;
+import com.example.searchservice.configuration.PathConfig;
+import com.example.searchservice.dtos.ItemDto;
 import com.example.searchservice.entities.GeocodedFile;
 import com.example.searchservice.entities.GeocodedFileStatus;
 import com.example.searchservice.entities.GeocodingItem;
@@ -9,8 +10,6 @@ import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.hashids.Hashids;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import org.thymeleaf.TemplateEngine;
@@ -20,6 +19,8 @@ import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 
 @Service
 @RequiredArgsConstructor
@@ -27,22 +28,21 @@ public class GeocodingService {
     private final TemplateEngine templateEngine;
     private final GeocodedFileService geocodedFileService;
     private final EsService esService;
+    private final NotificationService notificationService;
     private final Hashids hashids = new Hashids("TESTSALT", 4);
-    @Value("${workdir.path}")
-    private String WORKDIR_PATH;
+    private final PathConfig pathConfig;
+    private final Executor executor = Executors.newFixedThreadPool(5);
 
     @SneakyThrows
     @PostConstruct
     public void init() {
-        if (Files.notExists(Path.of(WORKDIR_PATH, "geocoding")))
-            Files.createDirectory(Path.of(WORKDIR_PATH, "geocoding"));
-        if (Files.notExists(Path.of(WORKDIR_PATH, "geocoding", "source")))
-            Files.createDirectory(Path.of(WORKDIR_PATH, "geocoding", "source"));
-        if (Files.notExists(Path.of(WORKDIR_PATH, "geocoding", "report")))
-            Files.createDirectory(Path.of(WORKDIR_PATH, "geocoding", "report"));
+        if (Files.notExists(Path.of(pathConfig.getPath(), pathConfig.getGeocodingSource())))
+            Files.createDirectory(Path.of(pathConfig.getPath(), pathConfig.getGeocodingSource()));
+        if (Files.notExists(Path.of(pathConfig.getPath(), pathConfig.getGeocodingReport())))
+            Files.createDirectory(Path.of(pathConfig.getPath(), pathConfig.getGeocodingReport()));
     }
 
-    public void saveFile(MultipartFile file, Long personId) throws IOException {
+    public GeocodedFile saveFile(MultipartFile file, Long personId) throws IOException {
         GeocodedFile geocodedFile = GeocodedFile.builder()
                 .creationDate(new Date())
                 .personId(personId)
@@ -51,23 +51,26 @@ public class GeocodingService {
 
         String fileName = UUID.randomUUID().toString();
         try (OutputStream outputStream = new BufferedOutputStream(
-                new FileOutputStream(Path.of(WORKDIR_PATH, "geocoding", "source", fileName).toFile()))) {
+                new FileOutputStream(Path.of(pathConfig.getPath(), pathConfig.getGeocodingSource(), fileName).toFile()))) {
             file.getInputStream().transferTo(outputStream);
         }
 
-        geocodedFile.setSourceFile(Path.of("geocoding", "source", fileName).toString());
+        geocodedFile.setSourceFile(Path.of(pathConfig.getGeocodingSource(), fileName).toString());
         geocodedFile.setStatus(GeocodedFileStatus.STARTED);
         geocodedFileService.save(geocodedFile);
+        notificationService.sendMessage(geocodedFile.getPersonId(), geocodedFile);
 
-        processAddresses(Path.of(WORKDIR_PATH, "geocoding", "source", fileName), fileName, geocodedFile);
-
-        geocodedFile.setStatus(GeocodedFileStatus.DONE);
-        geocodedFile.setReportFile(Path.of("geocoding", "report", fileName + ".html").toString());
-        geocodedFileService.save(geocodedFile);
+        executor.execute(() -> {
+            try {
+                processAddresses(Path.of(pathConfig.getPath(), pathConfig.getGeocodingSource(), fileName), fileName, geocodedFile);
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        });
+        return geocodedFile;
     }
 
-    @Async
-    protected void processAddresses(Path file, String fileName, GeocodedFile geocodedFile) throws IOException {
+    private void processAddresses(Path file, String fileName, GeocodedFile geocodedFile) throws IOException {
         Scanner scanner = new Scanner(new BufferedInputStream(new FileInputStream(file.toFile())));
         List<GeocodingItem> addresses = new LinkedList<>();
         while (scanner.hasNextLine()) {
@@ -80,10 +83,15 @@ public class GeocodingService {
         geocodedFile.setTotal(Long.valueOf(addresses.size()));
         geocodedFile.setFound(addresses.stream().filter(item -> item.getItem() != null).count());
         generateStaticHtmlContent(addresses, fileName);
+
+        geocodedFile.setStatus(GeocodedFileStatus.DONE);
+        geocodedFile.setReportFile(Path.of(pathConfig.getGeocodingReport(), fileName + ".html").toString());
+        geocodedFileService.save(geocodedFile);
+        notificationService.sendMessage(geocodedFile.getPersonId(), geocodedFile);
     }
 
     private void generateStaticHtmlContent(List<GeocodingItem> addresses, String fileName) {
-        try (PrintWriter printWriter = new PrintWriter(Path.of(WORKDIR_PATH, "geocoding", "report", fileName + ".html").toFile())) {
+        try (PrintWriter printWriter = new PrintWriter(Path.of(pathConfig.getPath(), pathConfig.getGeocodingReport(), fileName + ".html").toFile())) {
             Context context = new Context();
             context.setVariable("list", addresses);
             printWriter.write(templateEngine.process("addresses.html", context));
