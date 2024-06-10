@@ -1,5 +1,6 @@
 package com.example.searchservice.entities;
 
+import com.example.searchservice.dos.ItemDto;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -7,5 +8,5 @@ import lombok.Setter;
 @Setter
 public class GeocodingItem {
     private String request;
-    private Item item;
+    private ItemDto item;
 }

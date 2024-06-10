@@ -21,6 +21,8 @@ public class GeocodedFile {
     private Date creationDate;
     private String sourceFile;
     private String reportFile;
+    private Long total;
+    private Long found;
 
     @Enumerated(EnumType.STRING)
     private GeocodedFileStatus status;

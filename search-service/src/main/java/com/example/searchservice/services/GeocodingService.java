@@ -1,11 +1,14 @@
 package com.example.searchservice.services;
 
+import com.example.searchservice.dos.ItemDto;
 import com.example.searchservice.entities.GeocodedFile;
 import com.example.searchservice.entities.GeocodedFileStatus;
 import com.example.searchservice.entities.GeocodingItem;
+import com.example.searchservice.entities.Item;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
+import org.hashids.Hashids;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
@@ -24,6 +27,7 @@ public class GeocodingService {
     private final TemplateEngine templateEngine;
     private final GeocodedFileService geocodedFileService;
     private final EsService esService;
+    private final Hashids hashids = new Hashids("TESTSALT", 4);
     @Value("${workdir.path}")
     private String WORKDIR_PATH;
 
@@ -55,7 +59,7 @@ public class GeocodingService {
         geocodedFile.setStatus(GeocodedFileStatus.STARTED);
         geocodedFileService.save(geocodedFile);
 
-        processAddresses(Path.of(WORKDIR_PATH, "geocoding", "source", fileName), fileName);
+        processAddresses(Path.of(WORKDIR_PATH, "geocoding", "source", fileName), fileName, geocodedFile);
 
         geocodedFile.setStatus(GeocodedFileStatus.DONE);
         geocodedFile.setReportFile(Path.of("geocoding", "report", fileName + ".html").toString());
@@ -63,16 +67,18 @@ public class GeocodingService {
     }
 
     @Async
-    protected void processAddresses(Path file, String fileName) throws IOException {
+    protected void processAddresses(Path file, String fileName, GeocodedFile geocodedFile) throws IOException {
         Scanner scanner = new Scanner(new BufferedInputStream(new FileInputStream(file.toFile())));
         List<GeocodingItem> addresses = new LinkedList<>();
         while (scanner.hasNextLine()) {
             String address = scanner.nextLine();
             GeocodingItem geocodingItem = new GeocodingItem();
             geocodingItem.setRequest(address);
-            geocodingItem.setItem(esService.findBestMatch(address).orElse(null));
+            geocodingItem.setItem(toDto(esService.findBestMatch(address).orElse(null)));
             addresses.add(geocodingItem);
         }
+        geocodedFile.setTotal(Long.valueOf(addresses.size()));
+        geocodedFile.setFound(addresses.stream().filter(item -> item.getItem() != null).count());
         generateStaticHtmlContent(addresses, fileName);
     }
 
@@ -84,5 +90,18 @@ public class GeocodingService {
         } catch (FileNotFoundException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    private ItemDto toDto(Item item) {
+        if (item == null)
+            return null;
+        ItemDto itemDto = new ItemDto();
+        itemDto.setId(hashids.encode(item.getId()));
+        itemDto.setName(item.getName());
+        itemDto.setAddr_city(item.getAddr_city());
+        itemDto.setAddr_country(item.getAddr_country());
+        itemDto.setAddr_street(item.getAddr_street());
+        itemDto.setAddr_housenumber(item.getAddr_housenumber());
+        return itemDto;
     }
 }
