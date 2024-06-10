@@ -72,12 +72,25 @@ public class GeocodingService {
     private void processAddresses(Path file, String fileName, GeocodedFile geocodedFile) throws IOException {
         Scanner scanner = new Scanner(new BufferedInputStream(new FileInputStream(file.toFile())));
         List<GeocodingItem> addresses = new LinkedList<>();
-        while (scanner.hasNextLine()) {
-            String address = scanner.nextLine();
-            GeocodingItem geocodingItem = new GeocodingItem();
-            geocodingItem.setRequest(address);
-            geocodingItem.setItem(toDto(esService.findBestMatch(address).orElse(null)));
-            addresses.add(geocodingItem);
+        try (PrintWriter printWriter = new PrintWriter(
+                new BufferedWriter(
+                        new FileWriter(
+                                Path.of(pathConfig.getPath(),
+                                        pathConfig.getGeocodingReport(), fileName + ".csv").toFile())))) {
+            printWriter.println("address,x,y");
+            while (scanner.hasNextLine()) {
+                String address = scanner.nextLine();
+                GeocodingItem geocodingItem = new GeocodingItem();
+                geocodingItem.setRequest(address);
+                geocodingItem.setItem(toDto(esService.findBestMatch(address).orElse(null)));
+                addresses.add(geocodingItem);
+                if (geocodingItem.getItem() == null) {
+                    printWriter.printf(Locale.US, "%s,%f,%f\n", address, 0f, 0f);
+                } else {
+                    printWriter.printf(Locale.US, "%s,%f,%f\n", address, geocodingItem.getItem().getCentroid().getX(),
+                            geocodingItem.getItem().getCentroid().getY());
+                }
+            }
         }
         geocodedFile.setTotal(Long.valueOf(addresses.size()));
         geocodedFile.setFound(addresses.stream().filter(item -> item.getItem() != null).count());
@@ -85,6 +98,7 @@ public class GeocodingService {
 
         geocodedFile.setStatus(GeocodedFileStatus.DONE);
         geocodedFile.setReportFile(Path.of(pathConfig.getGeocodingReport(), fileName + ".html").toString());
+        geocodedFile.setCsvReport(Path.of(pathConfig.getGeocodingReport(), fileName + ".csv").toString());
         geocodedFileService.save(geocodedFile);
         notificationService.sendMessage(geocodedFile.getPersonId(), geocodedFile);
     }

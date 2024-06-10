@@ -21,6 +21,7 @@ public class GeocodedFile {
     private Date creationDate;
     private String sourceFile;
     private String reportFile;
+    private String csvReport;
     private Long total;
     private Long found;
 
