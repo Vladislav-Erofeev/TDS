@@ -1,6 +1,6 @@
 package com.example.searchservice.controllers;
 
-import com.example.searchservice.entities.GeocodedFile;
+import com.example.searchservice.domain.entities.GeocodedFile;
 import com.example.searchservice.exceptions.UnsupportedFormatException;
 import com.example.searchservice.services.GeocodedFileService;
 import com.example.searchservice.services.GeocodingService;
@@ -14,7 +14,6 @@ import org.springframework.http.codec.ServerSentEvent;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.core.OAuth2AuthenticatedPrincipal;
-import org.springframework.web.ErrorResponse;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import reactor.core.publisher.Flux;

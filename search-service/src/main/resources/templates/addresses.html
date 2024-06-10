@@ -22,7 +22,7 @@
 <div th:each="addr : ${list}" class="row">
     <h3 th:text="${addr.getRequest()}"></h3>
     <a th:if="${addr.getItem() != null}" th:href="@{http://localhost:3000/map(object=${addr.getItem().getId()})}">перейти</a>
-    <h3 th:unless="${addr.getItem() != null}">null</h3>
+    <h3 th:unless="${addr.getItem() != null}">не определено</h3>
 </div>
 </body>
 </html>

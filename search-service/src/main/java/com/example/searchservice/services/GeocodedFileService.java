@@ -1,6 +1,6 @@
 package com.example.searchservice.services;
 
-import com.example.searchservice.entities.GeocodedFile;
+import com.example.searchservice.domain.entities.GeocodedFile;
 import com.example.searchservice.repositories.GeocodedFileRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

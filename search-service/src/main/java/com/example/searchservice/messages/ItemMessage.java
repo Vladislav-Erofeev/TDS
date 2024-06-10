@@ -1,6 +1,6 @@
 package com.example.searchservice.messages;
 
-import com.example.searchservice.entities.Item;
+import com.example.searchservice.domain.entities.Item;
 import lombok.Data;
 import lombok.ToString;
 

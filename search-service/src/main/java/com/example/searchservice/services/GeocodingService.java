@@ -1,11 +1,11 @@
 package com.example.searchservice.services;
 
 import com.example.searchservice.configuration.PathConfig;
-import com.example.searchservice.dtos.ItemDto;
-import com.example.searchservice.entities.GeocodedFile;
-import com.example.searchservice.entities.GeocodedFileStatus;
-import com.example.searchservice.entities.GeocodingItem;
-import com.example.searchservice.entities.Item;
+import com.example.searchservice.domain.dtos.ItemDto;
+import com.example.searchservice.domain.entities.GeocodedFile;
+import com.example.searchservice.domain.entities.GeocodedFileStatus;
+import com.example.searchservice.domain.entities.GeocodingItem;
+import com.example.searchservice.domain.entities.Item;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
@@ -109,6 +109,7 @@ public class GeocodingService {
         itemDto.setAddr_country(item.getAddr_country());
         itemDto.setAddr_street(item.getAddr_street());
         itemDto.setAddr_housenumber(item.getAddr_housenumber());
+        itemDto.setCentroid(item.getCentroid());
         return itemDto;
     }
 }

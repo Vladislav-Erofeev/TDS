@@ -1,15 +1,13 @@
 package com.example.geodata.controllers;
 
 import com.example.geodata.clients.ClassifierServiceClient;
-import com.example.geodata.domain.dto.CodeDto;
-import com.example.geodata.domain.dto.ErrorResponse;
-import com.example.geodata.domain.dto.ItemDto;
-import com.example.geodata.domain.dto.NewItemDto;
+import com.example.geodata.domain.dto.*;
 import com.example.geodata.domain.entities.Item;
 import com.example.geodata.mappers.ItemMapper;
 import com.example.geodata.mappers.PropsMapper;
 import com.example.geodata.services.ItemService;
 import lombok.RequiredArgsConstructor;
+import org.locationtech.jts.geom.Point;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -53,6 +51,13 @@ public class ObjectController {
     @GetMapping
     public List<Feature> getAll() {
         return itemService.getAll().stream().map(this::toFeature).toList();
+    }
+
+    @PreAuthorize("permitAll()")
+    @GetMapping("/centroid")
+    public CentroidDto getCentroid(@RequestParam("id") String id) {
+        Point point = itemService.getById(PropsMapper.decodeId(id)).getGeometry().getCentroid();
+        return new CentroidDto(point.getX(), point.getY());
     }
 
     @PreAuthorize("permitAll()")

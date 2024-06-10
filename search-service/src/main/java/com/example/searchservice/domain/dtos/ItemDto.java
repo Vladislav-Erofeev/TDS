@@ -1,7 +1,8 @@
-package com.example.searchservice.dtos;
+package com.example.searchservice.domain.dtos;
 
 import lombok.Getter;
 import lombok.Setter;
+import org.elasticsearch.geometry.Point;
 
 @Getter
 @Setter
@@ -13,4 +14,5 @@ public class ItemDto {
     private String addr_city;
     private String addr_street;
     private String addr_housenumber;
+    private CentroidDto centroid;
 }

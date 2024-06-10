@@ -1,8 +1,10 @@
 package com.example.searchservice.services;
 
-import com.example.searchservice.entities.Item;
+import com.example.searchservice.clients.GeodataClient;
+import com.example.searchservice.domain.entities.Item;
 import com.example.searchservice.repositories.EsRepository;
 import lombok.RequiredArgsConstructor;
+import org.hashids.Hashids;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -13,16 +15,20 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class EsService {
     private final EsRepository esRepository;
+    private final GeodataClient geodataClient;
+    private final Hashids hashids = new Hashids("TESTSALT", 4);
 
     public void deleteById(Long id) throws IOException {
         esRepository.deleteById(String.valueOf(id));
     }
 
     public void save(Long id, Item item) throws IOException {
+        item.setCentroid(geodataClient.getCentroid(hashids.encode(id)));
         esRepository.save(String.valueOf(id), item);
     }
 
     public void updateById(Long id, Item item) throws IOException {
+        item.setCentroid(geodataClient.getCentroid(hashids.encode(id)));
         esRepository.updateById(String.valueOf(id), item);
     }
 

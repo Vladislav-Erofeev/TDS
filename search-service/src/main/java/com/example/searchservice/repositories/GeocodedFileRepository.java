@@ -1,6 +1,6 @@
 package com.example.searchservice.repositories;
 
-import com.example.searchservice.entities.GeocodedFile;
+import com.example.searchservice.domain.entities.GeocodedFile;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

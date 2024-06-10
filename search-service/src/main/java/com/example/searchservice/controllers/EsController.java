@@ -1,7 +1,7 @@
 package com.example.searchservice.controllers;
 
-import com.example.searchservice.dtos.ItemDto;
-import com.example.searchservice.entities.Item;
+import com.example.searchservice.domain.dtos.ItemDto;
+import com.example.searchservice.domain.entities.Item;
 import com.example.searchservice.services.EsService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

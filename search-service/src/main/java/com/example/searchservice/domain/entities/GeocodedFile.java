@@ -1,4 +1,4 @@
-package com.example.searchservice.entities;
+package com.example.searchservice.domain.entities;
 
 import jakarta.persistence.*;
 import lombok.*;
