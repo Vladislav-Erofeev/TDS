@@ -1,6 +1,6 @@
 package com.example.searchservice.services;
 
-import com.example.searchservice.clients.GeodataClient;
+import com.example.searchservice.clients.GeodataGrpcClient;
 import com.example.searchservice.domain.entities.Item;
 import com.example.searchservice.repositories.EsRepository;
 import lombok.RequiredArgsConstructor;
@@ -15,7 +15,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class EsService {
     private final EsRepository esRepository;
-    private final GeodataClient geodataClient;
+    private final GeodataGrpcClient geodataGrpcClient;
     private final Hashids hashids = new Hashids("TESTSALT", 4);
 
     public void deleteById(Long id) throws IOException {
@@ -23,12 +23,12 @@ public class EsService {
     }
 
     public void save(Long id, Item item) throws IOException {
-        item.setCentroid(geodataClient.getCentroid(hashids.encode(id)));
+        item.setCentroid(geodataGrpcClient.getCentroidById(hashids.encode(id)));
         esRepository.save(String.valueOf(id), item);
     }
 
     public void updateById(Long id, Item item) throws IOException {
-        item.setCentroid(geodataClient.getCentroid(hashids.encode(id)));
+        item.setCentroid(geodataGrpcClient.getCentroidById(hashids.encode(id)));
         esRepository.updateById(String.valueOf(id), item);
     }
 

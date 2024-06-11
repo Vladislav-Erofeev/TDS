@@ -1,15 +1,13 @@
-package com.example.searchservice.domain.dtos;
+package com.example.searchservice.domain.entities;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Getter
 @Setter
 @AllArgsConstructor
-@NoArgsConstructor
-public class CentroidDto {
+public class Centroid {
     private Double x;
     private Double y;
 }

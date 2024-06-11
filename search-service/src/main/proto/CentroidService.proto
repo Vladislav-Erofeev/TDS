@@ -1,0 +1,16 @@
+syntax = "proto3";
+option java_package = "com.example.centroid.grpc";
+option java_multiple_files = true;
+
+message CentroidRequest {
+  string id = 1;
+}
+
+message CentroidResponse {
+  double x = 1;
+  double y = 2;
+}
+
+service CentroidService {
+  rpc getCentroid(CentroidRequest) returns (CentroidResponse);
+}
