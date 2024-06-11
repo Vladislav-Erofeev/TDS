@@ -29,4 +29,6 @@ public class NotificationService {
         ServerSentEvent<GeocodedFile> serverSentEvent = ServerSentEvent.builder(geocodedFile).build();
         subscribers.get(personId).next(serverSentEvent);
     }
+
+    // TODO сделать отправку уведомления на почту об окончании геокодирования
 }
