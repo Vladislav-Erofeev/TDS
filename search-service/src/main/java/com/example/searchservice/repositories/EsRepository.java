@@ -1,7 +1,7 @@
 package com.example.searchservice.repositories;
 
 import com.example.searchservice.configuration.ElasticsearchProperties;
-import com.example.searchservice.domain.dtos.CentroidDto;
+import com.example.searchservice.domain.entities.Centroid;
 import com.example.searchservice.domain.entities.Item;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
@@ -13,7 +13,6 @@ import org.elasticsearch.action.update.UpdateRequest;
 import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.client.RestHighLevelClient;
 import org.elasticsearch.common.unit.Fuzziness;
-import org.elasticsearch.geometry.Point;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.Operator;
 import org.elasticsearch.index.query.QueryBuilders;
@@ -113,7 +112,7 @@ public class EsRepository {
         item.setAddr_housenumber((String) data.getOrDefault("addr_housenumber", null));
         Map<String, Object> point = (Map<String, Object>) data.get("centroid");
         if (point != null)
-            item.setCentroid(new CentroidDto((Double) point.get("x"), (Double) point.get("y")));
+            item.setCentroid(new Centroid((Double) point.get("x"), (Double) point.get("y")));
         return item;
     }
 
