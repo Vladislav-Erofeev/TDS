@@ -49,6 +49,12 @@ public class GeocodingController {
         });
     }
 
+    @DeleteMapping("/{id}")
+    public void deleteById(@PathVariable("id") Long id,
+                           @AuthenticationPrincipal OAuth2AuthenticatedPrincipal principal) throws IllegalAccessException {
+        geocodedFileService.deleteById(id, principal.getAttribute("id"));
+    }
+
     @GetMapping
     public List<GeocodedFile> getAllByPersonId(@AuthenticationPrincipal OAuth2AuthenticatedPrincipal principal) {
         return geocodedFileService.getAllByPersonId(principal.getAttribute("id"));
@@ -57,5 +63,10 @@ public class GeocodingController {
     @ExceptionHandler
     public ResponseEntity<String> errorResponse(UnsupportedFormatException e) {
         return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler
+    public ResponseEntity<String> illegalAccesException(IllegalAccessException e) {
+        return new ResponseEntity<>("Illegal access", HttpStatus.FORBIDDEN);
     }
 }
