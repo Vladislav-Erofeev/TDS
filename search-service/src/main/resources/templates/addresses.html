@@ -12,17 +12,46 @@
     });
 </script>
 <style>
-    .row {
-        display: flex;
-        gap: 10px;
-        align-items: center;
+    table {
+        width: 100%;
+        margin-bottom: 20px;
+        border: 1px solid #b2b2b2;
+        border-collapse: collapse;
+    }
+    table th {
+        font-weight: bold;
+        padding: 5px;
+        background: #6bb6ef;
+        border: 1px solid #b2b2b2;
+    }
+    table td {
+        border: 1px solid #b2b2b2;
+        padding: 5px;
     }
 </style>
 <body>
-<div th:each="addr : ${list}" class="row">
-    <h3 th:text="${addr.getRequest()}"></h3>
-    <a th:if="${addr.getItem() != null}" th:href="@{http://localhost:3000/map(object=${addr.getItem().getId()})}">перейти</a>
-    <h3 th:unless="${addr.getItem() != null}">не определено</h3>
-</div>
+<table>
+    <thead>
+    <th>Адрес</th>
+    <th>X</th>
+    <th>Y</th>
+    <th>Ссылка</th>
+    </thead>
+    <tbody>
+    <th:block th:each="addr : ${list}">
+        <tr>
+            <th><p th:text="${addr.getRequest()}"></p></th>
+            <td th:unless="${addr.getItem() != null}">не определено</td>
+            <td th:unless="${addr.getItem() != null}">не определено</td>
+            <td th:unless="${addr.getItem() != null}">не определено</td>
+            <td th:if="${addr.getItem() != null}"><p th:text="${addr.getItem().getCentroid().getX()}"></p></td>
+            <td th:if="${addr.getItem() != null}"><p th:text="${addr.getItem().getCentroid().getY()}"></p></td>
+            <td th:if="${addr.getItem() != null}">
+                <a th:href="@{http://localhost:3000/map(object=${addr.getItem().getId()})}">перейти</a>
+            </td>
+        </tr>
+    </th:block>
+    </tbody>
+</table>
 </body>
 </html>
