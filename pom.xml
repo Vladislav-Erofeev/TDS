@@ -44,6 +44,7 @@
         <module>sso</module>
         <module>geodata</module>
         <module>search-service</module>
+        <module>project-service</module>
     </modules>
 
 </project>
