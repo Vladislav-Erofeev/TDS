@@ -4,7 +4,6 @@ import com.example.projectservice.domain.entities.PersonProject;
 import com.example.projectservice.domain.entities.PersonProjectRole;
 import com.example.projectservice.domain.entities.Project;
 import com.example.projectservice.exceptions.LinkAlreadyExistException;
-import com.example.projectservice.repositories.PersonProjectRepository;
 import com.example.projectservice.repositories.ProjectRepository;
 import com.example.projectservice.services.PersonProjectService;
 import com.example.projectservice.services.ProjectService;
@@ -22,7 +21,6 @@ import java.util.Optional;
 @Transactional(readOnly = true)
 public class ProjectServiceImpl implements ProjectService {
     private final ProjectRepository projectRepository;
-    private final PersonProjectRepository personProjectRepository;
     private final PersonProjectService personProjectService;
 
     public Project getById(Long id) {
@@ -32,34 +30,23 @@ public class ProjectServiceImpl implements ProjectService {
 
     @Transactional
     public Project save(Project project, Long personId) {
-        PersonProject personProject = new PersonProject();
-        personProject.setPersonId(personId);
-        personProject.setRole(PersonProjectRole.OWNER);
-
-        project.addPersonProject(personProject);
         project.setCreatedAt(new Date());
         project.setModifiedAt(new Date());
         Project saved = projectRepository.save(project);
-
-        personProject.setProject(saved);
-        personProjectRepository.save(personProject);
+        personProjectService.save(personId, saved, PersonProjectRole.OWNER);
         return saved;
     }
 
     @Transactional
     public void attachProjectToPerson(Long personId, Long projectId) throws LinkAlreadyExistException {
-        if (personProjectRepository.findAllByPersonIdAndProjectId(personId, projectId).isPresent())
+        if (personProjectService.getByPersonIdAndProjectId(personId, projectId).isPresent())
             throw new LinkAlreadyExistException();
         Project project = getById(projectId);
-        PersonProject personProject = new PersonProject();
-        personProject.setPersonId(personId);
-        personProject.setProject(project);
-        personProject.setRole(PersonProjectRole.USER);
-        personProjectRepository.save(personProject);
+        personProjectService.save(personId, project, PersonProjectRole.USER);
     }
 
     public List<Project> getAllByPersonId(Long personId) {
-        return personProjectRepository.findAllByPersonId(personId).stream().map(PersonProject::getProject).toList();
+        return personProjectService.getAllByPersonId(personId).stream().map(PersonProject::getProject).toList();
     }
 
     @Transactional
