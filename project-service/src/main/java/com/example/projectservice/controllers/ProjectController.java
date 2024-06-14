@@ -5,6 +5,7 @@ import com.example.projectservice.exceptions.InvalidInviteLinkException;
 import com.example.projectservice.exceptions.LinkAlreadyExistException;
 import com.example.projectservice.mappers.ProjectMapper;
 import com.example.projectservice.mappers.PropsMapper;
+import com.example.projectservice.services.PersonProjectService;
 import com.example.projectservice.services.ProjectService;
 import com.example.projectservice.utlis.InviteGenerator;
 import lombok.RequiredArgsConstructor;
@@ -23,6 +24,7 @@ public class ProjectController {
     private final ProjectService projectService;
     private final ProjectMapper projectMapper = ProjectMapper.INSTANCE;
     private final InviteGenerator inviteGenerator;
+    private final PersonProjectService personProjectService;
 
     @PostMapping
     public ProjectDto save(@RequestBody ProjectDto projectDto,
@@ -39,7 +41,9 @@ public class ProjectController {
 
     @GetMapping("/{projectId}")
     public ProjectDto getById(@PathVariable("projectId") String id) {
-        return projectMapper.toDto(projectService.getById(PropsMapper.decodeId(id)));
+        ProjectDto projectDto = projectMapper.toDto(projectService.getById(PropsMapper.decodeId(id)));
+        projectDto.setPersonsCount(personProjectService.getPersonsCountByProjectId(PropsMapper.decodeId(id)));
+        return projectDto;
     }
 
     @PatchMapping("/{projectId}")

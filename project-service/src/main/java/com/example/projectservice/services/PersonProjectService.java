@@ -14,4 +14,5 @@ public interface PersonProjectService {
     PersonProject save(Long personId, Project project, PersonProjectRole role);
     Optional<PersonProject> getByPersonIdAndProjectId(Long personId, Long projectId);
     List<PersonProject> getAllByPersonId(Long personId);
+    Integer getPersonsCountByProjectId(Long projectId);
 }

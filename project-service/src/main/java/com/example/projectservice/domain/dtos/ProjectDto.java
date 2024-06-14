@@ -13,4 +13,5 @@ public class ProjectDto {
     private String comment;
     private Date createdAt;
     private Date modifiedAt;
+    private Integer personsCount;
 }

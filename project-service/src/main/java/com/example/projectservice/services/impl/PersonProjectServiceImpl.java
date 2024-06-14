@@ -19,6 +19,11 @@ import java.util.Optional;
 public class PersonProjectServiceImpl implements PersonProjectService {
     private final PersonProjectRepository personProjectRepository;
 
+    @Override
+    public Integer getPersonsCountByProjectId(Long projectId) {
+        return personProjectRepository.countAllByProjectId(projectId);
+    }
+
     @Transactional(readOnly = true, propagation = Propagation.REQUIRES_NEW)
     @Override
     public boolean hasAuthority(Long personId, Long projectId, PersonProjectRole... roles) {

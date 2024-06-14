@@ -11,4 +11,5 @@ import java.util.Optional;
 public interface PersonProjectRepository extends JpaRepository<PersonProject, PersonProject.PersonProjectId> {
     List<PersonProject> findAllByPersonId(Long personId);
     Optional<PersonProject> findAllByPersonIdAndProjectId(Long personId, Long projectId);
+    Integer countAllByProjectId(Long projectId);
 }
