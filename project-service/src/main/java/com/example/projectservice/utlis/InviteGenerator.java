@@ -2,7 +2,7 @@ package com.example.projectservice.utlis;
 
 import com.example.projectservice.domain.entities.PersonProjectRole;
 import com.example.projectservice.exceptions.InvalidInviteLinkException;
-import com.example.projectservice.services.ProjectService;
+import com.example.projectservice.services.PersonProjectService;
 import lombok.RequiredArgsConstructor;
 import org.hashids.Hashids;
 import org.springframework.stereotype.Component;
@@ -11,10 +11,10 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class InviteGenerator {
     private final Hashids hashids = new Hashids("sdfsdfsfdffddfdsf", 20);
-    private final ProjectService projectService;
+    private final PersonProjectService personProjectService;
 
     public String generateHash(Long personId, Long projectId) throws IllegalAccessException {
-        if (!projectService.hasAuthority(personId, projectId, PersonProjectRole.ADMIN, PersonProjectRole.OWNER))
+        if (!personProjectService.hasAuthority(personId, projectId, PersonProjectRole.ADMIN, PersonProjectRole.OWNER))
             throw new IllegalAccessException();
         long timeStamp = System.currentTimeMillis();
         timeStamp += 60 * 60 * 1000;
