@@ -13,4 +13,5 @@ public class MessageDto {
     private String projectId;
     private String content;
     private Date sendTime;
+    private boolean edited;
 }

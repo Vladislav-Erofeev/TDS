@@ -26,8 +26,8 @@ public class ChatController {
                         messageMapper.toDto(messageService.save(messageMapper.toEntity(messageEvent.getMessage()))));
             }
             case EDIT -> {
-                messageService.editById(messageMapper.toEntity(messageEvent.getMessage()));
-                return messageEvent;
+                return new MessageEvent(MessageActionType.EDIT,
+                        messageMapper.toDto(messageService.editById(messageMapper.toEntity(messageEvent.getMessage()))));
             }
             case DELETE -> {
                 messageService.deleteById(PropsMapper.decodeId(messageEvent.getMessage().getId()));

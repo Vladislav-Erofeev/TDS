@@ -19,4 +19,5 @@ public class Message {
     private Long projectId;
     private String content;
     private Date sendTime;
+    private boolean edited;
 }

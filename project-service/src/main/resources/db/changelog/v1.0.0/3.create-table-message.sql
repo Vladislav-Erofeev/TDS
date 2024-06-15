@@ -6,6 +6,7 @@ create table message(
     person_id int references person(id) on delete set null not null,
     project_id int references project(project_id) on delete cascade not null,
     content varchar not null,
-    send_time timestamp without time zone
+    send_time timestamp without time zone,
+    edited bool
 );
 -- rollback drop table message;
