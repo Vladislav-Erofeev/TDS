@@ -1,6 +1,7 @@
 package com.example.projectservice.controllers;
 
-import com.example.projectservice.domain.dtos.MessageDto;
+import com.example.projectservice.domain.dtos.MessageEvent;
+import com.example.projectservice.domain.dtos.MessageActionType;
 import com.example.projectservice.mappers.MessageMapper;
 import com.example.projectservice.mappers.PropsMapper;
 import com.example.projectservice.services.MessageService;
@@ -22,8 +23,8 @@ public class MessageController {
 
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/{projectId}")
-    public List<MessageDto> getAllMessages(@PathVariable("projectId") String projectId) {
+    public List<MessageEvent> getAllMessages(@PathVariable("projectId") String projectId) {
         return messageService.getMessagesByProjectId(PropsMapper.decodeId(projectId))
-                .stream().map(messageMapper::toDto).toList();
+                .stream().map(message -> new MessageEvent(MessageActionType.SEND, messageMapper.toDto(message))).toList();
     }
 }

@@ -7,4 +7,6 @@ import java.util.List;
 public interface MessageService {
     Message save(Message message);
     List<Message> getMessagesByProjectId(Long projectId);
+    void deleteById(Long id);
+    Message editById(Message message);
 }

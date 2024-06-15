@@ -1,7 +1,9 @@
 package com.example.projectservice.controllers;
 
-import com.example.projectservice.domain.dtos.MessageDto;
+import com.example.projectservice.domain.dtos.MessageActionType;
+import com.example.projectservice.domain.dtos.MessageEvent;
 import com.example.projectservice.mappers.MessageMapper;
+import com.example.projectservice.mappers.PropsMapper;
 import com.example.projectservice.services.MessageService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.messaging.handler.annotation.MessageMapping;
@@ -17,7 +19,21 @@ public class ChatController {
 
     @MessageMapping("/chat/{projectId}")
     @SendTo("/messages/{projectId}")
-    public MessageDto handleMessage(@Payload MessageDto message) {
-        return messageMapper.toDto(messageService.save(messageMapper.toEntity(message)));
+    public MessageEvent handleMessage(@Payload MessageEvent messageEvent) {
+        switch (messageEvent.getType()) {
+            case SEND -> {
+                return new MessageEvent(MessageActionType.SEND,
+                        messageMapper.toDto(messageService.save(messageMapper.toEntity(messageEvent.getMessage()))));
+            }
+            case EDIT -> {
+                messageService.editById(messageMapper.toEntity(messageEvent.getMessage()));
+                return messageEvent;
+            }
+            case DELETE -> {
+                messageService.deleteById(PropsMapper.decodeId(messageEvent.getMessage().getId()));
+                return messageEvent;
+            }
+        }
+        return null;
     }
 }

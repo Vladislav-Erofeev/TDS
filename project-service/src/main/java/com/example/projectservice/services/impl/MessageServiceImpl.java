@@ -24,6 +24,17 @@ public class MessageServiceImpl implements MessageService {
     }
 
     @Override
+    @Transactional
+    public void deleteById(Long id) {
+        messageRepository.deleteById(id);
+    }
+
+    @Override
+    public Message editById(Message message) {
+        return messageRepository.save(message);
+    }
+
+    @Override
     public List<Message> getMessagesByProjectId(Long projectId) {
         return messageRepository.getAllByProjectId(projectId);
     }
