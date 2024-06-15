@@ -24,6 +24,7 @@ public class PersonController {
         return personService.getALl().stream().map(personMapper::toDto).collect(Collectors.toList());
     }
 
+    @PreAuthorize("isAuthenticated()")
     @GetMapping("/{id}")
     public PersonDTO getById(@PathVariable("id") long id) {
         return personMapper.toDto(personService.getById(id));
