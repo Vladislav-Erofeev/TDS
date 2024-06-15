@@ -38,11 +38,12 @@ public class ProjectServiceImpl implements ProjectService {
     }
 
     @Transactional
-    public void attachProjectToPerson(Long personId, Long projectId) throws LinkAlreadyExistException {
+    public Project attachProjectToPerson(Long personId, Long projectId) throws LinkAlreadyExistException {
         if (personProjectService.getByPersonIdAndProjectId(personId, projectId).isPresent())
             throw new LinkAlreadyExistException();
         Project project = getById(projectId);
         personProjectService.save(personId, project, PersonProjectRole.USER);
+        return project;
     }
 
     public List<Project> getAllByPersonId(Long personId) {

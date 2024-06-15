@@ -12,6 +12,7 @@ import java.util.Date;
 @Getter
 @Setter
 public class PersonDTO {
+    private String id;
     private String email;
     private String password;
     private Long phone;

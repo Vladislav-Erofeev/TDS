@@ -1,6 +1,7 @@
 package com.example.projectservice.controllers;
 
 import com.example.projectservice.domain.dtos.ProjectDto;
+import com.example.projectservice.domain.entities.Project;
 import com.example.projectservice.exceptions.InvalidInviteLinkException;
 import com.example.projectservice.exceptions.LinkAlreadyExistException;
 import com.example.projectservice.mappers.ProjectMapper;
@@ -62,9 +63,13 @@ public class ProjectController {
     }
 
     @GetMapping("/invite")
-    public void attachPersonToProject(@RequestParam("token") String hash,
+    public ProjectDto attachPersonToProject(@RequestParam("token") String hash,
                                       @AuthenticationPrincipal OAuth2AuthenticatedPrincipal principal) throws InvalidInviteLinkException, LinkAlreadyExistException {
-        projectService.attachProjectToPerson(principal.getAttribute("id"), inviteGenerator.validateHash(hash));
+        Project project = projectService.attachProjectToPerson(principal.getAttribute("id"),
+                inviteGenerator.validateHash(hash));
+        ProjectDto projectDto = projectMapper.toDto(project);
+        projectDto.setPersonsCount(personProjectService.getPersonsCountByProjectId(project.getId()));
+        return projectDto;
     }
 
     @GetMapping("/{projectId}/invite_token")

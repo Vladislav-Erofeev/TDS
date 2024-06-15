@@ -10,7 +10,7 @@ public interface ProjectService {
 
     Project save(Project project, Long personId);
 
-    void attachProjectToPerson(Long personId, Long projectId) throws LinkAlreadyExistException;
+    Project attachProjectToPerson(Long personId, Long projectId) throws LinkAlreadyExistException;
 
     List<Project> getAllByPersonId(Long personId);
 

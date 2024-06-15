@@ -13,10 +13,12 @@ public interface PersonMapper {
 
     @Mapping(source = "birthDate", target = "birthDate", qualifiedByName = "dateToString")
     @Mapping(source = "registrationDate", target = "registrationDate", qualifiedByName = "dateToString")
+    @Mapping(source = "id", target = "id", qualifiedByName = "encodeId")
     PersonDTO toDto(Person person);
 
     @Mapping(source = "birthDate", target = "birthDate", qualifiedByName = "stringToDate")
     @Mapping(source = "registrationDate", target = "registrationDate", qualifiedByName = "stringToDate")
+    @Mapping(source = "id", target = "id", qualifiedByName = "decodeId")
     Person toEntity(PersonDTO personDTO);
 
     @Mapping(source = "birthDate", target = "birthDate", qualifiedByName = "stringToDate")
