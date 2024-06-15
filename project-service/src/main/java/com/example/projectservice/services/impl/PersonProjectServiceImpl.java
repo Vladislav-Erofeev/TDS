@@ -53,4 +53,9 @@ public class PersonProjectServiceImpl implements PersonProjectService {
     public List<PersonProject> getAllByPersonId(Long personId) {
         return personProjectRepository.findAllByPersonId(personId);
     }
+
+    @Override
+    public List<PersonProject> getAllPersonsByProjectId(Long projectId) {
+        return personProjectRepository.findAllByProjectId(projectId);
+    }
 }

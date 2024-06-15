@@ -15,4 +15,5 @@ public interface PersonProjectService {
     Optional<PersonProject> getByPersonIdAndProjectId(Long personId, Long projectId);
     List<PersonProject> getAllByPersonId(Long personId);
     Integer getPersonsCountByProjectId(Long projectId);
+    List<PersonProject> getAllPersonsByProjectId(Long projectId);
 }

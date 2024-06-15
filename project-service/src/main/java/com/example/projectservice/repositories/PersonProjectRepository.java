@@ -12,4 +12,5 @@ public interface PersonProjectRepository extends JpaRepository<PersonProject, Pe
     List<PersonProject> findAllByPersonId(Long personId);
     Optional<PersonProject> findAllByPersonIdAndProjectId(Long personId, Long projectId);
     Integer countAllByProjectId(Long projectId);
+    List<PersonProject> findAllByProjectId(Long projectId);
 }

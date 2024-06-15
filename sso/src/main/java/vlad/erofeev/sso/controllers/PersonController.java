@@ -7,6 +7,7 @@ import vlad.erofeev.sso.domain.Roles;
 import vlad.erofeev.sso.domain.dto.PersonDTO;
 import vlad.erofeev.sso.services.PersonService;
 import vlad.erofeev.sso.services.mappers.PersonMapper;
+import vlad.erofeev.sso.services.mappers.PropsMapper;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -26,8 +27,8 @@ public class PersonController {
 
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/{id}")
-    public PersonDTO getById(@PathVariable("id") long id) {
-        return personMapper.toDto(personService.getById(id));
+    public PersonDTO getById(@PathVariable("id") String id) {
+        return personMapper.toDto(personService.getById(PropsMapper.decodeId(id)));
     }
 
     @PostMapping("/{id}/role")

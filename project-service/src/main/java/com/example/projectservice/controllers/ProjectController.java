@@ -1,9 +1,11 @@
 package com.example.projectservice.controllers;
 
+import com.example.projectservice.domain.dtos.PersonProjectDto;
 import com.example.projectservice.domain.dtos.ProjectDto;
 import com.example.projectservice.domain.entities.Project;
 import com.example.projectservice.exceptions.InvalidInviteLinkException;
 import com.example.projectservice.exceptions.LinkAlreadyExistException;
+import com.example.projectservice.mappers.PersonProjectMapper;
 import com.example.projectservice.mappers.ProjectMapper;
 import com.example.projectservice.mappers.PropsMapper;
 import com.example.projectservice.services.PersonProjectService;
@@ -24,6 +26,7 @@ import java.util.List;
 public class ProjectController {
     private final ProjectService projectService;
     private final ProjectMapper projectMapper = ProjectMapper.INSTANCE;
+    private final PersonProjectMapper personProjectMapper = PersonProjectMapper.INSTANCE;
     private final InviteGenerator inviteGenerator;
     private final PersonProjectService personProjectService;
 
@@ -45,6 +48,12 @@ public class ProjectController {
         ProjectDto projectDto = projectMapper.toDto(projectService.getById(PropsMapper.decodeId(id)));
         projectDto.setPersonsCount(personProjectService.getPersonsCountByProjectId(PropsMapper.decodeId(id)));
         return projectDto;
+    }
+
+    @GetMapping("/{projectId}/persons")
+    public List<PersonProjectDto> getAllPersonsByProjectId(@PathVariable("projectId") String projectId) {
+        return personProjectService.getAllPersonsByProjectId(PropsMapper.decodeId(projectId))
+                .stream().map(personProjectMapper::toDto).toList();
     }
 
     @PatchMapping("/{projectId}")
