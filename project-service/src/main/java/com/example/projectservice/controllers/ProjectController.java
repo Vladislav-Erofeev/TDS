@@ -12,6 +12,8 @@ import com.example.projectservice.services.PersonProjectService;
 import com.example.projectservice.services.ProjectService;
 import com.example.projectservice.utlis.InviteGenerator;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.core.OAuth2AuthenticatedPrincipal;
@@ -50,12 +52,6 @@ public class ProjectController {
         return projectDto;
     }
 
-    @GetMapping("/{projectId}/persons")
-    public List<PersonProjectDto> getAllPersonsByProjectId(@PathVariable("projectId") String projectId) {
-        return personProjectService.getAllPersonsByProjectId(PropsMapper.decodeId(projectId))
-                .stream().map(personProjectMapper::toDto).toList();
-    }
-
     @PatchMapping("/{projectId}")
     public ProjectDto editById(@PathVariable("projectId") String id,
                                @RequestBody ProjectDto projectDto,
@@ -85,5 +81,10 @@ public class ProjectController {
     public String generateInviteHash(@AuthenticationPrincipal OAuth2AuthenticatedPrincipal principal,
                                      @PathVariable("projectId") String projectId) throws IllegalAccessException {
         return inviteGenerator.generateHash(principal.getAttribute("id"), PropsMapper.decodeId(projectId));
+    }
+
+    @ExceptionHandler(value = IllegalAccessException.class)
+    public ResponseEntity<String> illegalAccessException(IllegalAccessException e) {
+        return new ResponseEntity<>("Access denied", HttpStatus.FORBIDDEN);
     }
 }

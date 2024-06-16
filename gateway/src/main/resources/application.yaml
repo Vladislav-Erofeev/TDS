@@ -11,6 +11,9 @@ spring:
             allowedMethods:
               - GET
               - POST
+              - DELETE
+              - PATCH
+              - PUT
       routes:
         - id: classifier_route
           uri: lb://classifier

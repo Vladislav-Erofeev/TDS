@@ -24,6 +24,14 @@ public class PersonProjectServiceImpl implements PersonProjectService {
         return personProjectRepository.countAllByProjectId(projectId);
     }
 
+    @Override
+    @Transactional
+    public void deletePersonProject(Long personId, Long projectId, Long adminId) throws IllegalAccessException {
+        if (!personId.equals(adminId) && !hasAuthority(adminId, projectId, PersonProjectRole.ADMIN, PersonProjectRole.OWNER))
+            throw new IllegalAccessException();
+        personProjectRepository.deleteByPersonIdAndAndProjectId(personId, projectId);
+    }
+
     @Transactional(readOnly = true, propagation = Propagation.REQUIRES_NEW)
     @Override
     public boolean hasAuthority(Long personId, Long projectId, PersonProjectRole... roles) {

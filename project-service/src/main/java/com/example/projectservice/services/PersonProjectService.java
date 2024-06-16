@@ -16,4 +16,5 @@ public interface PersonProjectService {
     List<PersonProject> getAllByPersonId(Long personId);
     Integer getPersonsCountByProjectId(Long projectId);
     List<PersonProject> getAllPersonsByProjectId(Long projectId);
+    void deletePersonProject(Long personId, Long projectId, Long adminId) throws IllegalAccessException;
 }
