@@ -1,6 +1,7 @@
 package com.example.projectservice.controllers;
 
 import com.example.projectservice.domain.dtos.PersonProjectDto;
+import com.example.projectservice.domain.entities.PersonProjectRole;
 import com.example.projectservice.mappers.PersonProjectMapper;
 import com.example.projectservice.mappers.PropsMapper;
 import com.example.projectservice.services.PersonProjectService;
@@ -34,6 +35,16 @@ public class PersonProjectController {
                                         @AuthenticationPrincipal OAuth2AuthenticatedPrincipal principal) throws IllegalAccessException {
         personProjectService.deletePersonProject(PropsMapper.decodeId(personId), PropsMapper.decodeId(projectId),
                 principal.getAttribute("id"));
+    }
+
+    @PatchMapping("/{personId}")
+    public void setPersonProjectRole(@PathVariable("personId") String personId,
+                                     @RequestParam("projectId") String projectId,
+                                     @RequestParam("role") PersonProjectRole role,
+                                     @AuthenticationPrincipal OAuth2AuthenticatedPrincipal principal)
+            throws IllegalAccessException {
+        personProjectService.editPersonProject(PropsMapper.decodeId(personId), PropsMapper.decodeId(projectId),
+                role, principal.getAttribute("id"));
     }
 
     @ExceptionHandler(value = IllegalAccessException.class)

@@ -12,10 +12,10 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class PersonProjectServiceImpl implements PersonProjectService {
     private final PersonProjectRepository personProjectRepository;
 
@@ -32,11 +32,20 @@ public class PersonProjectServiceImpl implements PersonProjectService {
         personProjectRepository.deleteByPersonIdAndAndProjectId(personId, projectId);
     }
 
+    @Override
+    @Transactional
+    public PersonProject editPersonProject(Long personId, Long projectId, PersonProjectRole role, Long principalId) throws IllegalAccessException {
+        if (!hasAuthority(principalId, projectId, PersonProjectRole.ADMIN, PersonProjectRole.OWNER))
+            throw new IllegalAccessException();
+        PersonProject personProject = getByPersonIdAndProjectId(personId, projectId);
+        personProject.setRole(role);
+        return personProjectRepository.save(personProject);
+    }
+
     @Transactional(readOnly = true, propagation = Propagation.REQUIRES_NEW)
     @Override
     public boolean hasAuthority(Long personId, Long projectId, PersonProjectRole... roles) {
-        PersonProject personProject = personProjectRepository.findAllByPersonIdAndProjectId(personId, projectId)
-                .orElseThrow(() -> new ObjectNotFoundException("PersonProject", personId));
+        PersonProject personProject = getByPersonIdAndProjectId(personId, projectId);
         for (PersonProjectRole role : roles)
             if (personProject.getRole().equals(role))
                 return true;
@@ -53,8 +62,10 @@ public class PersonProjectServiceImpl implements PersonProjectService {
         return personProjectRepository.save(personProject);
     }
 
-    public Optional<PersonProject> getByPersonIdAndProjectId(Long personId, Long projectId) {
-        return personProjectRepository.findAllByPersonIdAndProjectId(personId, projectId);
+    @Override
+    public PersonProject getByPersonIdAndProjectId(Long personId, Long projectId) {
+        return personProjectRepository.findAllByPersonIdAndProjectId(personId, projectId)
+                .orElseThrow(() -> new ObjectNotFoundException("PersonProject", personId));
     }
 
     @Override

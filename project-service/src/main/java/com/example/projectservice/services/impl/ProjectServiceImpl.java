@@ -39,7 +39,7 @@ public class ProjectServiceImpl implements ProjectService {
 
     @Transactional
     public Project attachProjectToPerson(Long personId, Long projectId) throws LinkAlreadyExistException {
-        if (personProjectService.getByPersonIdAndProjectId(personId, projectId).isPresent())
+        if (personProjectService.getByPersonIdAndProjectId(personId, projectId) != null)
             throw new LinkAlreadyExistException();
         Project project = getById(projectId);
         personProjectService.save(personId, project, PersonProjectRole.USER);

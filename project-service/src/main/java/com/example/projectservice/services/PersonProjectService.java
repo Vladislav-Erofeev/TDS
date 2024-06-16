@@ -12,9 +12,10 @@ import java.util.Optional;
 public interface PersonProjectService {
     boolean hasAuthority(Long personId, Long projectId, PersonProjectRole... roles);
     PersonProject save(Long personId, Project project, PersonProjectRole role);
-    Optional<PersonProject> getByPersonIdAndProjectId(Long personId, Long projectId);
+    PersonProject getByPersonIdAndProjectId(Long personId, Long projectId);
     List<PersonProject> getAllByPersonId(Long personId);
     Integer getPersonsCountByProjectId(Long projectId);
     List<PersonProject> getAllPersonsByProjectId(Long projectId);
     void deletePersonProject(Long personId, Long projectId, Long adminId) throws IllegalAccessException;
+    PersonProject editPersonProject(Long personId, Long projectId, PersonProjectRole role, Long principalId) throws IllegalAccessException;
 }
