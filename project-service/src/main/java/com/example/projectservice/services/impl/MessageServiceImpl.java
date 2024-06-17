@@ -18,20 +18,17 @@ public class MessageServiceImpl implements MessageService {
     private final MessageRepository messageRepository;
 
     @Override
-    @Transactional
     public Message save(Message message) {
         message.setSendTime(new Date());
         return messageRepository.save(message);
     }
 
     @Override
-    @Transactional
     public void deleteById(Long id) {
         messageRepository.deleteById(id);
     }
 
     @Override
-    @Transactional
     public Message editById(Message message) {
         Message oldMessage = getById(message.getId());
         oldMessage.setContent(message.getContent());

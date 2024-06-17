@@ -10,7 +10,6 @@ import com.example.projectservice.services.ProjectService;
 import lombok.RequiredArgsConstructor;
 import org.hibernate.ObjectNotFoundException;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
 import java.util.List;
@@ -18,17 +17,17 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
-@Transactional(readOnly = true)
 public class ProjectServiceImpl implements ProjectService {
     private final ProjectRepository projectRepository;
     private final PersonProjectService personProjectService;
 
+    @Override
     public Project getById(Long id) {
         Optional<Project> optionalProject = projectRepository.findById(id);
         return optionalProject.orElseThrow(() -> new ObjectNotFoundException("Project", id));
     }
 
-    @Transactional
+    @Override
     public Project save(Project project, Long personId) {
         project.setCreatedAt(new Date());
         project.setModifiedAt(new Date());
@@ -37,27 +36,31 @@ public class ProjectServiceImpl implements ProjectService {
         return saved;
     }
 
-    @Transactional
+    @Override
     public Project attachProjectToPerson(Long personId, Long projectId) throws LinkAlreadyExistException {
-        if (personProjectService.getByPersonIdAndProjectId(personId, projectId) != null)
-            throw new LinkAlreadyExistException();
+        try {
+            if (personProjectService.getByPersonIdAndProjectId(personId, projectId) != null)
+                throw new LinkAlreadyExistException();
+        } catch (ObjectNotFoundException ignore) {
+        }
         Project project = getById(projectId);
         personProjectService.save(personId, project, PersonProjectRole.USER);
         return project;
     }
 
+    @Override
     public List<Project> getAllByPersonId(Long personId) {
         return personProjectService.getAllByPersonId(personId).stream().map(PersonProject::getProject).toList();
     }
 
-    @Transactional
+    @Override
     public void deleteById(Long projectId, Long personId) throws IllegalAccessException {
         if (!personProjectService.hasAuthority(personId, projectId, PersonProjectRole.OWNER))
             throw new IllegalAccessException();
         projectRepository.deleteById(projectId);
     }
 
-    @Transactional
+    @Override
     public Project editById(Long projectId, Long personId, Project project) throws IllegalAccessException {
         if (!personProjectService.hasAuthority(personId, projectId, PersonProjectRole.OWNER))
             throw new IllegalAccessException();

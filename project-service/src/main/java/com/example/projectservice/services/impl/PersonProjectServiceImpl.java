@@ -8,14 +8,11 @@ import com.example.projectservice.services.PersonProjectService;
 import lombok.RequiredArgsConstructor;
 import org.hibernate.ObjectNotFoundException;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-@Transactional(readOnly = true)
 public class PersonProjectServiceImpl implements PersonProjectService {
     private final PersonProjectRepository personProjectRepository;
 
@@ -25,7 +22,6 @@ public class PersonProjectServiceImpl implements PersonProjectService {
     }
 
     @Override
-    @Transactional
     public void deletePersonProject(Long personId, Long projectId, Long adminId) throws IllegalAccessException {
         if (!personId.equals(adminId) && !hasAuthority(adminId, projectId, PersonProjectRole.ADMIN, PersonProjectRole.OWNER))
             throw new IllegalAccessException();
@@ -33,7 +29,6 @@ public class PersonProjectServiceImpl implements PersonProjectService {
     }
 
     @Override
-    @Transactional
     public PersonProject editPersonProject(Long personId, Long projectId, PersonProjectRole role, Long principalId) throws IllegalAccessException {
         if (!hasAuthority(principalId, projectId, PersonProjectRole.ADMIN, PersonProjectRole.OWNER))
             throw new IllegalAccessException();
@@ -42,7 +37,6 @@ public class PersonProjectServiceImpl implements PersonProjectService {
         return personProjectRepository.save(personProject);
     }
 
-    @Transactional(readOnly = true, propagation = Propagation.REQUIRES_NEW)
     @Override
     public boolean hasAuthority(Long personId, Long projectId, PersonProjectRole... roles) {
         PersonProject personProject = getByPersonIdAndProjectId(personId, projectId);
@@ -52,7 +46,6 @@ public class PersonProjectServiceImpl implements PersonProjectService {
         return false;
     }
 
-    @Transactional
     @Override
     public PersonProject save(Long personId, Project project, PersonProjectRole role) {
         PersonProject personProject = new PersonProject();
@@ -63,7 +56,7 @@ public class PersonProjectServiceImpl implements PersonProjectService {
     }
 
     @Override
-    public PersonProject getByPersonIdAndProjectId(Long personId, Long projectId) {
+    public PersonProject getByPersonIdAndProjectId(Long personId, Long projectId) throws ObjectNotFoundException {
         return personProjectRepository.findAllByPersonIdAndProjectId(personId, projectId)
                 .orElseThrow(() -> new ObjectNotFoundException("PersonProject", personId));
     }
