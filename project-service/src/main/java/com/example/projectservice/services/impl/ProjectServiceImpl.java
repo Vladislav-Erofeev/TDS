@@ -1,14 +1,18 @@
 package com.example.projectservice.services.impl;
 
-import com.example.projectservice.domain.entities.PersonProject;
-import com.example.projectservice.domain.entities.PersonProjectRole;
-import com.example.projectservice.domain.entities.Project;
+import com.example.projectservice.domain.dtos.MessageActionType;
+import com.example.projectservice.domain.dtos.MessageEvent;
+import com.example.projectservice.domain.entities.*;
 import com.example.projectservice.exceptions.LinkAlreadyExistException;
+import com.example.projectservice.mappers.MessageMapper;
+import com.example.projectservice.mappers.PropsMapper;
 import com.example.projectservice.repositories.ProjectRepository;
+import com.example.projectservice.services.MessageService;
 import com.example.projectservice.services.PersonProjectService;
 import com.example.projectservice.services.ProjectService;
 import lombok.RequiredArgsConstructor;
 import org.hibernate.ObjectNotFoundException;
+import org.springframework.messaging.core.MessageSendingOperations;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
@@ -20,6 +24,9 @@ import java.util.Optional;
 public class ProjectServiceImpl implements ProjectService {
     private final ProjectRepository projectRepository;
     private final PersonProjectService personProjectService;
+    private final MessageService messageService;
+    private final MessageSendingOperations<String> messageTemplate;
+    private final MessageMapper messageMapper = MessageMapper.INSTANCE;
 
     @Override
     public Project getById(Long id) {
@@ -45,6 +52,18 @@ public class ProjectServiceImpl implements ProjectService {
         }
         Project project = getById(projectId);
         personProjectService.save(personId, project, PersonProjectRole.USER);
+
+        // создание уведомления в чате о новом пользователе
+        Message message = new Message();
+        message.setProjectId(projectId);
+        message.setPersonId(personId);
+        message.setContent("ADD_USER");
+        message = messageService.save(message, MessageType.CHAT_MESSAGE);
+        // отправка всем подключённым клиентам
+        messageTemplate.convertAndSend(
+                "/messages/" + PropsMapper.encodeId(projectId),
+                new MessageEvent(MessageActionType.SEND, messageMapper.toDto(message))
+        );
         return project;
     }
 

@@ -2,6 +2,7 @@ package com.example.projectservice.controllers;
 
 import com.example.projectservice.domain.dtos.MessageActionType;
 import com.example.projectservice.domain.dtos.MessageEvent;
+import com.example.projectservice.domain.entities.MessageType;
 import com.example.projectservice.mappers.MessageMapper;
 import com.example.projectservice.mappers.PropsMapper;
 import com.example.projectservice.services.MessageService;
@@ -23,7 +24,8 @@ public class ChatController {
         switch (messageEvent.getType()) {
             case SEND -> {
                 return new MessageEvent(MessageActionType.SEND,
-                        messageMapper.toDto(messageService.save(messageMapper.toEntity(messageEvent.getMessage()))));
+                        messageMapper.toDto(messageService.save(messageMapper.toEntity(messageEvent.getMessage()),
+                                MessageType.USER_MESSAGE)));
             }
             case EDIT -> {
                 return new MessageEvent(MessageActionType.EDIT,

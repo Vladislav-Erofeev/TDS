@@ -1,12 +1,16 @@
 package com.example.projectservice.services.impl;
 
-import com.example.projectservice.domain.entities.PersonProject;
-import com.example.projectservice.domain.entities.PersonProjectRole;
-import com.example.projectservice.domain.entities.Project;
+import com.example.projectservice.domain.dtos.MessageActionType;
+import com.example.projectservice.domain.dtos.MessageEvent;
+import com.example.projectservice.domain.entities.*;
+import com.example.projectservice.mappers.MessageMapper;
+import com.example.projectservice.mappers.PropsMapper;
 import com.example.projectservice.repositories.PersonProjectRepository;
+import com.example.projectservice.services.MessageService;
 import com.example.projectservice.services.PersonProjectService;
 import lombok.RequiredArgsConstructor;
 import org.hibernate.ObjectNotFoundException;
+import org.springframework.messaging.core.MessageSendingOperations;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -15,6 +19,9 @@ import java.util.List;
 @RequiredArgsConstructor
 public class PersonProjectServiceImpl implements PersonProjectService {
     private final PersonProjectRepository personProjectRepository;
+    private final MessageService messageService;
+    private final MessageSendingOperations<String> messageTemplate;
+    private final MessageMapper messageMapper = MessageMapper.INSTANCE;
 
     @Override
     public Integer getPersonsCountByProjectId(Long projectId) {
@@ -25,6 +32,18 @@ public class PersonProjectServiceImpl implements PersonProjectService {
     public void deletePersonProject(Long personId, Long projectId, Long adminId) throws IllegalAccessException {
         if (!personId.equals(adminId) && !hasAuthority(adminId, projectId, PersonProjectRole.ADMIN, PersonProjectRole.OWNER))
             throw new IllegalAccessException();
+
+        // создание уведомления в чате о новом пользователе
+        Message message = new Message();
+        message.setProjectId(projectId);
+        message.setPersonId(personId);
+        message.setContent(personId.equals(adminId) ? "REMOVE_USER" : "KICK_USER");
+        message = messageService.save(message, MessageType.CHAT_MESSAGE);
+        // отправка всем подключённым клиентам
+        messageTemplate.convertAndSend(
+                "/messages/" + PropsMapper.encodeId(projectId),
+                new MessageEvent(MessageActionType.SEND, messageMapper.toDto(message))
+        );
         personProjectRepository.deleteByPersonIdAndAndProjectId(personId, projectId);
     }
 

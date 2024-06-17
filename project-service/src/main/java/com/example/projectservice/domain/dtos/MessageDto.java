@@ -1,5 +1,6 @@
 package com.example.projectservice.domain.dtos;
 
+import com.example.projectservice.domain.entities.MessageType;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -14,4 +15,5 @@ public class MessageDto {
     private String content;
     private Date sendTime;
     private boolean edited;
+    private MessageType messageType;
 }

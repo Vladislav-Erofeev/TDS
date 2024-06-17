@@ -20,4 +20,6 @@ public class Message {
     private String content;
     private Date sendTime;
     private boolean edited;
+    @Enumerated(value = EnumType.STRING)
+    private MessageType messageType;
 }

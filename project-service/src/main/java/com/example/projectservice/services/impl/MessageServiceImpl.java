@@ -1,6 +1,7 @@
 package com.example.projectservice.services.impl;
 
 import com.example.projectservice.domain.entities.Message;
+import com.example.projectservice.domain.entities.MessageType;
 import com.example.projectservice.repositories.MessageRepository;
 import com.example.projectservice.services.MessageService;
 import lombok.RequiredArgsConstructor;
@@ -18,8 +19,10 @@ public class MessageServiceImpl implements MessageService {
     private final MessageRepository messageRepository;
 
     @Override
-    public Message save(Message message) {
+    public Message save(Message message, MessageType type) {
         message.setSendTime(new Date());
+        message.setMessageType(type);
+        message.setEdited(false);
         return messageRepository.save(message);
     }
 
