@@ -10,7 +10,7 @@ import java.util.List;
 public interface MessageService {
     @Transactional
     Message save(Message message, MessageType messageType);
-    List<Message> getMessagesByProjectId(Long projectId);
+    List<Message> getMessagesByProjectId(Long projectId, int page);
     @Transactional
     void deleteById(Long id);
     @Transactional

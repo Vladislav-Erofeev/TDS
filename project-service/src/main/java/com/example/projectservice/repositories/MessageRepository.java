@@ -1,6 +1,7 @@
 package com.example.projectservice.repositories;
 
 import com.example.projectservice.domain.entities.Message;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -8,5 +9,5 @@ import java.util.List;
 
 @Repository
 public interface MessageRepository extends JpaRepository<Message, Long> {
-    List<Message> getAllByProjectIdOrderById(Long projectId);
+    List<Message> getAllByProjectIdOrderByIdDesc(Long projectId, PageRequest pageRequest);
 }
