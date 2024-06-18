@@ -19,7 +19,7 @@ public class EventController {
     private final MessageService messageService;
     private final MessageMapper messageMapper = MessageMapper.INSTANCE;
     @MessageMapping("/user_events/{projectId}")
-    @SendTo("/user_events/{projectId}")
+    @SendTo("/broker/user_events/{projectId}")
     public ActiveUserEvent handleActiveUserEvent(@Payload ActiveUserEvent activeUserEvent) {
         return activeUserEvent;
     }
