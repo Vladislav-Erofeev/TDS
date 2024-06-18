@@ -18,11 +18,11 @@ create table if not exists project_item(
     line geometry(LineString, 4326)
 );
 
-create index person_id_idx on project_item(person_id);
-create index project_id_idx on project_item(project_id);
-create index  on project_item(code_id);
+create index project_item_person_id_idx on project_item(person_id);
+create index project_item_project_id_idx on project_item(project_id);
+create index project_item_code_id_idx on project_item(code_id);
 
--- rollback drop index person_id_idx;
--- rollback drop index project_id_idx;
--- rollback drop index code_id_idx;
+-- rollback drop index project_item_person_id_idx;
+-- rollback drop index project_item_project_id_idx;
+-- rollback drop index project_item_code_id_idx;
 -- rollback drop table project_item;

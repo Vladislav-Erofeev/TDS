@@ -1,5 +1,6 @@
 package com.example.projectservice.controllers;
 
+import com.example.projectservice.domain.dtos.ActiveUserEvent;
 import com.example.projectservice.domain.dtos.MessageActionType;
 import com.example.projectservice.domain.dtos.MessageEvent;
 import com.example.projectservice.domain.entities.MessageType;
@@ -14,12 +15,17 @@ import org.springframework.stereotype.Controller;
 
 @Controller
 @RequiredArgsConstructor
-public class ChatController {
+public class EventController {
     private final MessageService messageService;
     private final MessageMapper messageMapper = MessageMapper.INSTANCE;
+    @MessageMapping("/user_events/{projectId}")
+    @SendTo("/user_events/{projectId}")
+    public ActiveUserEvent handleActiveUserEvent(@Payload ActiveUserEvent activeUserEvent) {
+        return activeUserEvent;
+    }
 
     @MessageMapping("/chat/{projectId}")
-    @SendTo("/messages/{projectId}")
+    @SendTo("/broker/chat/{projectId}")
     public MessageEvent handleMessage(@Payload MessageEvent messageEvent) {
         switch (messageEvent.getType()) {
             case SEND -> {

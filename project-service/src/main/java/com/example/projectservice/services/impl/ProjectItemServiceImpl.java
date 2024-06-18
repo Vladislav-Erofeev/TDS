@@ -24,8 +24,6 @@ public class ProjectItemServiceImpl implements ProjectItemService {
         if (!personProjectService.hasAnyAuthority(item.getPersonId(), projectId))
             throw new IllegalAccessException();
 
-        item.setCreationDate(new Date());
-        item.setModifiedDate(new Date());
         item.setProject(projectService.getById(projectId));
         return projectItemRepository.save(item);
     }

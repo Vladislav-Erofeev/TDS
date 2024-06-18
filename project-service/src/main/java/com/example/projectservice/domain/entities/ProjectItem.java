@@ -4,8 +4,10 @@ import io.hypersistence.utils.hibernate.type.json.JsonBinaryType;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.DiscriminatorFormula;
 import org.hibernate.annotations.Type;
+import org.hibernate.annotations.UpdateTimestamp;
 import org.locationtech.jts.geom.Geometry;
 
 import java.util.Date;
@@ -22,7 +24,9 @@ public abstract class ProjectItem {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "item_id")
     private Long id;
+    @Column(updatable = false, nullable = false)
     private Long personId;
+    @Column(updatable = false, nullable = false)
     private Long codeId;
 
     private String name;
@@ -31,13 +35,17 @@ public abstract class ProjectItem {
     private String addrStreet;
     private String addrHousenumber;
 
+    @CreationTimestamp
+    @Column(updatable = false, nullable = false)
     private Date creationDate;
+    @UpdateTimestamp
+    @Column(nullable = false)
     private Date modifiedDate;
     @Type(JsonBinaryType.class)
     private Map<String, Object> properties = new HashMap<>();
 
     @ManyToOne
-    @JoinColumn(name = "project_id", referencedColumnName = "project_id")
+    @JoinColumn(name = "project_id", referencedColumnName = "project_id", updatable = false, nullable = false)
     private Project project;
 
     public abstract Geometry getGeometry();
