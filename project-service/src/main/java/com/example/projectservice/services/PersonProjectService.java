@@ -15,6 +15,9 @@ public interface PersonProjectService {
     @Transactional(readOnly = true, propagation = Propagation.REQUIRES_NEW)
     boolean hasAuthority(Long personId, Long projectId, PersonProjectRole... roles);
 
+    @Transactional(readOnly = true, propagation = Propagation.REQUIRES_NEW)
+    boolean hasAnyAuthority(Long personId, Long projectId);
+
     PersonProject save(Long personId, Project project, PersonProjectRole role);
 
     @Transactional(readOnly = true, propagation = Propagation.REQUIRES_NEW)

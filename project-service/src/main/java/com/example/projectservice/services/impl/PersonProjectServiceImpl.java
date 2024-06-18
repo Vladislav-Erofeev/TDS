@@ -66,6 +66,16 @@ public class PersonProjectServiceImpl implements PersonProjectService {
     }
 
     @Override
+    public boolean hasAnyAuthority(Long personId, Long projectId) {
+        try {
+            getByPersonIdAndProjectId(personId, projectId);
+            return true;
+        } catch (ObjectNotFoundException e) {
+            return false;
+        }
+    }
+
+    @Override
     public PersonProject save(Long personId, Project project, PersonProjectRole role) {
         PersonProject personProject = new PersonProject();
         personProject.setPersonId(personId);

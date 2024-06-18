@@ -23,6 +23,8 @@ public class Project {
     private Date modifiedAt;
     @OneToMany(mappedBy = "project")
     private List<PersonProject> personProjects = new LinkedList<>();
+    @OneToMany(mappedBy = "project")
+    private List<ProjectItem> items = new LinkedList<>();
 
     public void addPersonProject(PersonProject personProject) {
         personProjects.add(personProject);
